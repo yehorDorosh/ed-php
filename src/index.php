@@ -31,5 +31,6 @@
       <button type="submit" name="clear" value="clear">Clear</button>
     </div>
   </form>
+  <script src="./js/index.js"></script>
 </body>
 </html>
