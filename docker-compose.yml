@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  db:
+    image: mysql
+    container_name: sbox-db
+    restart: always
+    environment:
+      - MYSQL_DATABASE=main_db
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 3306:3306
+    # volumes:
+    #   - ./mysql:/docker-entrypoint-initdb.d
+    # networks:
+    #   - web-db-net
+
+  www:
+    image: sandbox
+    container_name: sbox
+    restart: always
+    ports:
+      - 7777:80
+    volumes:
+      - /Users/egor.dorosh/private/sites/ed-php/src:/var/www/html
+    # networks:
+    #   - web-db-net
+
+# networks:
+#     web-db-net:
