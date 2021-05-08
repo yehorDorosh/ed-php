@@ -1,6 +1,6 @@
 const api = {
   read: {
-    vars: ['testData', 'testDataGet']
+    vars: ['egor', 'x']
   },
   write: {
     vars: {
@@ -28,7 +28,8 @@ const api = {
 // })
 // .catch(error => console.log(error));
 
-// fetch('http://localhost:7777/api.php?readVarName=testDataGet')
+
+// fetch('http://localhost:7777/api.php?readVarName=egor')
 // .then(response => {
 //   if (response.ok) {
 //     return response.json();
@@ -41,23 +42,24 @@ const api = {
 // })
 // .catch(error => console.log(error));
 
+
 const apiDelete = {
-  all: true,
+  all: false,
   vars: []
 }
 
-fetch('http://localhost:7777/api.php/', {
-  method: 'DELETE',
-  body: JSON.stringify(apiDelete)
-})
-.then(response => {
-  if (response.ok) {
-    return response.json();
-  } else {
-    console.log("Ошибка HTTP: " + response.status);
-  }
-})
-.then(data => {
-  console.log(data);
-})
-.catch(error => console.log(error));
+// fetch('http://localhost:7777/api.php/', {
+//   method: 'DELETE',
+//   body: JSON.stringify(apiDelete)
+// })
+// .then(response => {
+//   if (response.ok) {
+//     return response.json();
+//   } else {
+//     console.log("Ошибка HTTP: " + response.status);
+//   }
+// })
+// .then(data => {
+//   console.log(data);
+// })
+// .catch(error => console.log(error));
