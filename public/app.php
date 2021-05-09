@@ -2,7 +2,7 @@
 include './api/api.php';
 
 if(isset($_POST["clear"])) {
-  clearTable($tableName, $connConfig);
+  clearTable($varsTableName, $connConfig);
 }
 
 if (
@@ -11,7 +11,7 @@ if (
   $_POST["saveVarValue"] &&
   isset($_POST["send"])
   ) {
-    $response = saveVarToDb($_POST["saveVarName"], $_POST["saveVarValue"], $tableName, $connConfig);
+    $response = saveVarToDb($_POST["saveVarName"], $_POST["saveVarValue"], $varsTableName, $connConfig);
     if ($responseTable["error"]) {
       echo $responseTable["errorMessage"];
     }
@@ -22,11 +22,11 @@ if (
   $_POST["readVarName"] &&
   isset($_POST["send"])
   ) {
-    $response = readVarFromDb($_POST["readVarName"], $tableName, $connConfig);
+    $response = readVarFromDb($_POST["readVarName"], $varsTableName, $connConfig);
     $phpAlert = $response["data"] . "<br>";
 }
 
-$responseTable = printVarTable($tableName, $connConfig);
+$responseTable = printVarTable($varsTableName, $connConfig);
 if ($responseTable["error"]) {
   echo $responseTable["errorMessage"];
 }

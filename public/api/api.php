@@ -10,7 +10,7 @@ if (in_array($origin, $allowed_domains) && getenv('ENV_MODE') !== "prod") {
     header('Access-Control-Allow-Origin: ' . $origin);
 }
 
-include "$_SERVER[DOCUMENT_ROOT]/php/db.php";
+include "$_SERVER[DOCUMENT_ROOT]/php/vars-db.php";
 
 $connConfig = [
   "dbHostName" => getenv('ENV_MODE') === "prod" ? "localhost" : "db", //localhost or db. getenv('ENV_MODE') = prod
@@ -19,14 +19,14 @@ $connConfig = [
   "dbName" => "main_db"
 ];
 
-$tableName = "vars";
+$varsTableName = "vars";
 
 // GET
 if (
 $_SERVER["REQUEST_METHOD"] == "GET" &&
 $_GET["readVarName"]
 ) {
-  $response = readVarFromDb($_GET["readVarName"], $tableName, $connConfig);
+  $response = readVarFromDb($_GET["readVarName"], $varsTableName, $connConfig);
   echo json_encode([
     $_GET["readVarName"]=>$response["data"]
   ]);
@@ -43,25 +43,25 @@ if (
       $vars = array();
       $error = array();
       foreach ($varsList as &$varName) {
-        $response = readVarFromDb($varName, $tableName, $connConfig);
+        $response = readVarFromDb($varName, $varsTableName, $connConfig);
         $vars[$varName] = $response["data"];
         if($response["error"]) $error[$varName] = $response["errorMessage"];
       }
       $recivedData["response"]["vars"] = $vars;
       $recivedData["response"]["onReadError"] = $error;
-      $recivedData["response"]["tableVars"] = getVarTable($tableName, $connConfig);
+      $recivedData["response"]["tableVars"] = getVarTable($varsTableName, $connConfig);
     }
     // WRITE DATA
     if(array_key_exists('write', $recivedData )) {
       $varsList = $recivedData["write"]["vars"];
       $error = array();
       foreach ($varsList as $varName => $varValue) {
-        $response = saveVarToDb($varName, $varValue, $tableName, $connConfig);
+        $response = saveVarToDb($varName, $varValue, $varsTableName, $connConfig);
         if ($response["error"]) {
           $error[$varName] = $response["errorMessage"];
         }
       }
-      $recivedData["response"]["tableVars"] = getVarTable($tableName, $connConfig);
+      $recivedData["response"]["tableVars"] = getVarTable($varsTableName, $connConfig);
       $recivedData["response"]["onWriteError"] = $error;
     }
     echo json_encode($recivedData);
@@ -76,12 +76,12 @@ if (
     $varsList = $recivedData["vars"];
     $error = array();
     foreach ($varsList as &$varName) {
-      $response = deleteVar($varName, $tableName, $connConfig);
+      $response = deleteVar($varName, $varsTableName, $connConfig);
       if($response["error"]) $error[$varName] = $response["errorMessage"];
     }
-    if ($recivedData["all"] === TRUE) clearTable($tableName, $connConfig);
+    if ($recivedData["all"] === TRUE) clearTable($varsTableName, $connConfig);
     $recivedData["response"]["onDeleteError"] = $error;
-    $recivedData["response"]["tableVars"] = getVarTable($tableName, $connConfig);
+    $recivedData["response"]["tableVars"] = getVarTable($varsTableName, $connConfig);
     echo json_encode($recivedData);
   }
 }
