@@ -7,12 +7,7 @@ function varIsExist($conn, $tableName, $varName) {
   return true;
 }
 
-function saveVarToDb($varName, $varValue, $tableName, $connConfig) {
-  $response = [
-    "error"=>FALSE,
-    "errorMessage"=>""
-  ];
-  // Connection
+function connToDb($connConfig, &$response) {
   $conn = new mysqli(
     $connConfig["dbHostName"],
     $connConfig["dbUserName"],
@@ -22,8 +17,19 @@ function saveVarToDb($varName, $varValue, $tableName, $connConfig) {
   if ($conn->connect_error) {
     $response["error"] = TRUE;
     $response["errorMessage"] = "Connection to data base failed: " . $conn->connect_error;
-    return $response;
+    return NULL;
   }
+  return $conn;
+}
+
+function saveVarToDb($varName, $varValue, $tableName, $connConfig) {
+  $response = [
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
   // Create table
   $sqlNewTable = "CREATE TABLE $tableName(
     varName VARCHAR(65535),
@@ -62,17 +68,8 @@ function readVarFromDb($varName, $tableName, $connConfig) {
     "errorMessage"=>""
   ];
   // Connection
-  $conn = new mysqli(
-    $connConfig["dbHostName"],
-    $connConfig["dbUserName"],
-    $connConfig["dbUserPass"],
-    $connConfig["dbName"]
-  );
-  if ($conn->connect_error) {
-    $response["error"] = TRUE;
-    $response["errorMessage"] = "Connection to data base failed: " . $conn->connect_error;
-    return $response;
-  }
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
   // Read data
   $sqlGetData="SELECT * FROM $tableName WHERE varName='$varName'";
   if ($conn->query($sqlGetData) === FALSE) {
@@ -98,17 +95,8 @@ function clearTable($tableName, $connConfig) {
     "errorMessage"=>""
   ];
   // Connection
-  $conn = new mysqli(
-    $connConfig["dbHostName"],
-    $connConfig["dbUserName"],
-    $connConfig["dbUserPass"],
-    $connConfig["dbName"]
-  );
-  if ($conn->connect_error) {
-    $response["error"] = TRUE;
-    $response["errorMessage"] = "Connection to data base failed: " . $conn->connect_error;
-    return $response;
-  }
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
 
   $sql = "DELETE FROM $tableName";
   if ($conn->query($sql) === FALSE) {
@@ -126,17 +114,8 @@ function deleteVar($varName, $tableName, $connConfig) {
     "errorMessage"=>""
   ];
   // Connection
-  $conn = new mysqli(
-    $connConfig["dbHostName"],
-    $connConfig["dbUserName"],
-    $connConfig["dbUserPass"],
-    $connConfig["dbName"]
-  );
-  if ($conn->connect_error) {
-    $response["error"] = TRUE;
-    $response["errorMessage"] = "Connection to data base failed: " . $conn->connect_error;
-    return $response;
-  }
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
 
   $sql = "DELETE FROM $tableName WHERE varName='$varName'";
   if ($conn->query($sql) === FALSE) {
@@ -155,17 +134,8 @@ function printVarTable($tableName, $connConfig) {
     "errorMessage"=>""
   ];
   // Connection
-  $conn = new mysqli(
-    $connConfig["dbHostName"],
-    $connConfig["dbUserName"],
-    $connConfig["dbUserPass"],
-    $connConfig["dbName"]
-  );
-  if ($conn->connect_error) {
-    $response["error"] = TRUE;
-    $response["errorMessage"] = "Connection to data base failed: " . $conn->connect_error;
-    return $response;
-  }
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
   // Read data
   $sqlGetData="SELECT * FROM $tableName";
   if ($conn->query($sqlGetData) === FALSE) {
@@ -193,17 +163,8 @@ function getVarTable($tableName, $connConfig) {
     "errorMessage"=>""
   ];
   // Connection
-  $conn = new mysqli(
-    $connConfig["dbHostName"],
-    $connConfig["dbUserName"],
-    $connConfig["dbUserPass"],
-    $connConfig["dbName"]
-  );
-  if ($conn->connect_error) {
-    $response["error"] = TRUE;
-    $response["errorMessage"] = "Connection to data base failed: " . $conn->connect_error;
-    return $response;
-  }
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
   // Read data
   $sqlGetData="SELECT * FROM $tableName";
   if ($conn->query($sqlGetData) === FALSE) {

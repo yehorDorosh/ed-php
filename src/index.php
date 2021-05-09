@@ -31,6 +31,9 @@
       <button type="submit" name="clear" value="clear">Clear</button>
     </div>
   </form>
+  <button onclick="checkApi()">Check api</button>
+  <button onclick="checkApiGet()">Check api Get</button>
+  <button onclick="checkApiDelete()">Check api Delete</button>
   <script src="./js/index.js"></script>
 </body>
 </html>

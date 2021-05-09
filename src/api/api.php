@@ -1,5 +1,5 @@
 <?php
-include './php/db.php';
+include "$_SERVER[DOCUMENT_ROOT]/php/db.php";
 
 $connConfig = [
   "dbHostName" => getenv('ENV_MODE') === "prod" ? "localhost" : "db", //localhost or db. getenv('ENV_MODE') = prod

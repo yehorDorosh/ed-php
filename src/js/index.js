@@ -1,65 +1,67 @@
 const api = {
   read: {
-    vars: ['egor', 'x']
+    vars: ['y', 'z']
   },
   write: {
     vars: {
-      testWriteData: 99999,
-      crash: 12,
-      x: 23,
-      mama: 'papa'
+      y: 99999,
+      z: 12,
     }
   }
 };
 
-// fetch('http://localhost:7777/api.php/', {
-//   method: 'POST',
-//   body: JSON.stringify(api)
-// })
-// .then(response => {
-//   if (response.ok) {
-//     return response.json();
-//   } else {
-//     console.log("Ошибка HTTP: " + response.status);
-//   }
-// })
-// .then(data => {
-//   console.log(data);
-// })
-// .catch(error => console.log(error));
-
-
-// fetch('http://localhost:7777/api.php?readVarName=egor')
-// .then(response => {
-//   if (response.ok) {
-//     return response.json();
-//   } else {
-//     console.log("Ошибка HTTP: " + response.status);
-//   }
-// })
-// .then(data => {
-//   console.log(data);
-// })
-// .catch(error => console.log(error));
-
-
 const apiDelete = {
   all: false,
-  vars: []
+  vars: ['y', 'z']
 }
 
-// fetch('http://localhost:7777/api.php/', {
-//   method: 'DELETE',
-//   body: JSON.stringify(apiDelete)
-// })
-// .then(response => {
-//   if (response.ok) {
-//     return response.json();
-//   } else {
-//     console.log("Ошибка HTTP: " + response.status);
-//   }
-// })
-// .then(data => {
-//   console.log(data);
-// })
-// .catch(error => console.log(error));
+function checkApi() {
+  fetch('http://localhost:7777/api/api.php/', {
+    method: 'POST',
+    body: JSON.stringify(api)
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      console.log("Ошибка HTTP: " + response.status);
+    }
+  })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => console.log(error));
+}
+
+function checkApiDelete() {
+  fetch('http://localhost:7777/api/api.php/', {
+    method: 'DELETE',
+    body: JSON.stringify(apiDelete)
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      console.log("Ошибка HTTP: " + response.status);
+    }
+  })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => console.log(error));
+}
+
+function checkApiGet() {
+  fetch('http://localhost:7777/api/api.php?readVarName=egor')
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      console.log("Ошибка HTTP: " + response.status);
+    }
+  })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => console.log(error));
+}
