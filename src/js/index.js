@@ -1,3 +1,7 @@
+const localEnv = 'http://localhost:7777';
+const prodEnv = 'http://35.178.207.100';
+const host = window.ENV_MODE ? prodEnv : localEnv;
+
 const api = {
   read: {
     vars: ['y', 'z']
@@ -16,7 +20,7 @@ const apiDelete = {
 }
 
 function checkApi() {
-  fetch('http://localhost:7777/api/api.php/', {
+  fetch(`${host}/api/api.php/`, {
     method: 'POST',
     body: JSON.stringify(api)
   })
@@ -34,7 +38,7 @@ function checkApi() {
 }
 
 function checkApiDelete() {
-  fetch('http://localhost:7777/api/api.php/', {
+  fetch(`${host}/api/api.php/`, {
     method: 'DELETE',
     body: JSON.stringify(apiDelete)
   })
@@ -52,7 +56,7 @@ function checkApiDelete() {
 }
 
 function checkApiGet() {
-  fetch('http://localhost:7777/api/api.php?readVarName=egor')
+  fetch(`${host}/api/api.php?readVarName=egor`)
   .then(response => {
     if (response.ok) {
       return response.json();
