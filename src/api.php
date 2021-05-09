@@ -1,8 +1,8 @@
 <?php
 $connConfig = [
-  "dbHostName" => "db",
+  "dbHostName" => getenv('ENV_MODE') === "prod" ? "localhost" : "db", //localhost or db. getenv('ENV_MODE') = prod
   "dbUserName" => "admin",
-  "dbUserPass" => "admin",
+  "dbUserPass" => getenv('ENV_MODE') === "prod" ? getenv("DB_PASS") : "admin", //getenv("DB_PASS")
   "dbName" => "main_db"
 ];
 
@@ -228,6 +228,11 @@ function deleteVar($varName, $tableName, $connConfig) {
 }
 
 function printVarTable($tableName, $connConfig) {
+  $response = [
+    "data"=>NULL,
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
   // Connection
   $conn = new mysqli(
     $connConfig["dbHostName"],
@@ -236,12 +241,16 @@ function printVarTable($tableName, $connConfig) {
     $connConfig["dbName"]
   );
   if ($conn->connect_error) {
-    die("Connection to data base failed: " . $conn->connect_error . "<br>");
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Connection to data base failed: " . $conn->connect_error;
+    return $response;
   }
   // Read data
   $sqlGetData="SELECT * FROM $tableName";
   if ($conn->query($sqlGetData) === FALSE) {
-    die("Error when read data from db: " . $sqlGetData . "<br>" . $conn->error . "<br>");
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Error when read data from db: " . $sqlGetData . "<br>" . $conn->error;
+    return $response;
   }
   $result = $conn->query($sqlGetData);
   
@@ -253,6 +262,7 @@ function printVarTable($tableName, $connConfig) {
     echo "0 results";
   }
   $conn->close();
+  return $response;
 }
 
 function getVarTable($tableName, $connConfig) {

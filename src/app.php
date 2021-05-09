@@ -1,15 +1,6 @@
 <?php
 include 'api.php';
 
-$connConfig = [
-  "dbHostName" => "db",
-  "dbUserName" => "admin",
-  "dbUserPass" => "admin",
-  "dbName" => "main_db"
-];
-
-$tableName = "vars";
-
 if(isset($_POST["clear"])) {
   clearTable($tableName, $connConfig);
 }
@@ -32,4 +23,7 @@ if (
     $phpAlert = $response["data"] . "<br>";
 }
 
-printVarTable($tableName, $connConfig);
+$responseTable = printVarTable($tableName, $connConfig);
+if ($responseTable["error"]) {
+  echo $responseTable["errorMessage"];
+}
