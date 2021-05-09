@@ -1,14 +1,13 @@
 import React from 'react';
 
+import Card from './components/UI/Card/Card';
+
 
 function App() {
   return (
-    <div>
+    <Card>
       <h1>Test</h1>
-      <p>
-        {window.messageFromPHP}
-      </p>
-    </div>
+    </Card>
   );
 }
 

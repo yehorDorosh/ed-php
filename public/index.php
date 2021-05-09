@@ -41,6 +41,6 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
 
-    <?php require_once './php/test-api.php'?>
+    <!--<?php require_once './php/test-api.php'?>-->
   <script src="/static/js/bundle.js"></script><script src="/static/js/vendors~main.chunk.js"></script><script src="/static/js/main.chunk.js"></script></body>
 </html>
