@@ -1,5 +1,5 @@
 <?php
-include 'api.php';
+include './api/api.php';
 
 if(isset($_POST["clear"])) {
   clearTable($tableName, $connConfig);
