@@ -1,4 +1,4 @@
-<?php require_once './test-api.php'?>
+<?php require_once './app.php'?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -40,5 +40,7 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <?php require_once './php/test-api.php'?>
   </body>
 </html>

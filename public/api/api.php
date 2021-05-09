@@ -1,4 +1,6 @@
 <?php
+include "$_SERVER[DOCUMENT_ROOT]/php/vars-db.php";
+
 $origin = $_SERVER['HTTP_ORIGIN'];
 $allowed_domains = [
     'http://localhost:7777',
@@ -9,8 +11,6 @@ if (in_array($origin, $allowed_domains) && getenv('ENV_MODE') !== "prod") {
     header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
     header('Access-Control-Allow-Origin: ' . $origin);
 }
-
-include "$_SERVER[DOCUMENT_ROOT]/php/vars-db.php";
 
 $connConfig = [
   "dbHostName" => getenv('ENV_MODE') === "prod" ? "localhost" : "db", //localhost or db. getenv('ENV_MODE') = prod

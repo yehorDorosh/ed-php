@@ -1,25 +1,11 @@
 <?php
+include "db.php";
 
 function varIsExist($conn, $tableName, $varName) {
   $sql="SELECT varName FROM $tableName WHERE varName='$varName'";
   $result = $conn->query($sql);
   if (!$result->num_rows) return false;
   return true;
-}
-
-function connToDb($connConfig, &$response) {
-  $conn = new mysqli(
-    $connConfig["dbHostName"],
-    $connConfig["dbUserName"],
-    $connConfig["dbUserPass"],
-    $connConfig["dbName"]
-  );
-  if ($conn->connect_error) {
-    $response["error"] = TRUE;
-    $response["errorMessage"] = "Connection to data base failed: " . $conn->connect_error;
-    return NULL;
-  }
-  return $conn;
 }
 
 function saveVarToDb($varName, $varValue, $tableName, $connConfig) {
