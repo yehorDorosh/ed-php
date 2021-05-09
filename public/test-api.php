@@ -39,6 +39,6 @@
   <button onclick="checkApi()">Check api</button>
   <button onclick="checkApiGet()">Check api Get</button>
   <button onclick="checkApiDelete()">Check api Delete</button>
-  <script src="./js/index.js"></script>
+  <script src="./js/test-app.js"></script>
 </body>
 </html>

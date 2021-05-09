@@ -23,7 +23,7 @@ services:
     ports:
       - 7777:80
     volumes:
-      - /Users/egor.dorosh/private/sites/ed-php/src:/var/www/html
+      - /Users/egor.dorosh/private/sites/ed-php/public:/var/www/html
     # networks:
     #   - web-db-net
 

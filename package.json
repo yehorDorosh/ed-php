@@ -1,23 +1,34 @@
 {
-  "name": "ed-php",
-  "version": "1.0.0",
-  "description": "* Build image <br> `$ docker build [OPTIONS] PATH_TO_DOCKER_FILE`",
-  "main": "index.js",
+  "name": "react-the-complete-guide",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.4.1",
+    "@testing-library/user-event": "^7.2.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3"
+  },
   "scripts": {
-    "build": "gulp",
-    "dev": "NODE_ENV=dev gulp dev"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yehorDorosh/ed-php.git"
+  "eslintConfig": {
+    "extends": "react-app"
   },
-  "author": "Egor Dorosh",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/yehorDorosh/ed-php/issues"
-  },
-  "homepage": "https://github.com/yehorDorosh/ed-php#readme",
-  "devDependencies": {
-    "gulp": "^4.0.2"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
