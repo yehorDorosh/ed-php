@@ -11,7 +11,10 @@ if (
   $_POST["saveVarValue"] &&
   isset($_POST["send"])
   ) {
-    saveVarToDb($_POST["saveVarName"], $_POST["saveVarValue"], $tableName, $connConfig);
+    $response = saveVarToDb($_POST["saveVarName"], $_POST["saveVarValue"], $tableName, $connConfig);
+    if ($responseTable["error"]) {
+      echo $responseTable["errorMessage"];
+    }
 }
 
 if (

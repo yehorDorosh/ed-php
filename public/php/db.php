@@ -32,8 +32,8 @@ function saveVarToDb($varName, $varValue, $tableName, $connConfig) {
   if (!$conn) return $response;
   // Create table
   $sqlNewTable = "CREATE TABLE $tableName(
-    varName VARCHAR(65535),
-    varValue VARCHAR(65535)
+    varName TEXT,
+    varValue TEXT
   )";
   $tableIsExist = $conn->query("select 1 from `$tableName` LIMIT 1");
   if (!$tableIsExist) {
