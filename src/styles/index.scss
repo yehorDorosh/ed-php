@@ -1,0 +1,11 @@
+@import 'vars.scss';
+@import 'typography.scss';
+@import './utils/margin-padding.scss';
+
+html {
+  font-family: 'Ubuntu', sans-serif;
+  color: $main-font-color;
+  background-color: $main-bg-color;
+  font-size: $main-font-size;
+  line-height: $main-line-height;
+}
