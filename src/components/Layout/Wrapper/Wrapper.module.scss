@@ -1,0 +1,14 @@
+@import '../../../styles/vars.scss';
+
+.wrap {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-sizing: border-box;
+  
+  @include d {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

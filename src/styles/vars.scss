@@ -1,6 +1,29 @@
-$main-bg-color: #fff;
-$main-font-color: #000;
+$main-bg-color: #222;
+$main-font-color: #fff;
+$primary: #1bad07;
+$secondary: #a5a37e;
 
 $main-font-size: 16px;
 $main-line-height: 1.1;
 
+$mobile-min: 512px;
+$tablet-min: 768px;
+$desktop-min: 1024px;
+
+@mixin m {
+  @media (min-width: $mobile-min) {
+    @content;
+  }
+}
+
+@mixin t {
+  @media (min-width: $tablet-min) {
+    @content;
+  }
+}
+
+@mixin d {
+  @media (min-width: $desktop-min) {
+    @content;
+  }
+}

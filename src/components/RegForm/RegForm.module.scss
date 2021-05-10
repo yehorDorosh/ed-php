@@ -1,0 +1,22 @@
+$row-half-interval: 8px;
+
+.form {
+  .btn-row {
+    text-align: right;
+  }
+
+  .row {
+    margin-top: $row-half-interval;
+    margin-bottom: $row-half-interval;
+  
+    &:first-child {
+      margin-top: 0;
+      margin-bottom: $row-half-interval;
+    }
+
+    &:last-child {
+      margin-top: $row-half-interval;
+      margin-bottom: 0;
+    }
+  }
+}

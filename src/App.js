@@ -1,13 +1,15 @@
 import React from 'react';
 
-import Card from './components/UI/Card/Card';
+import Wrapper from './components/Layout/Wrapper/Wrapper';
+import RegForm from './components/RegForm/RegForm';
 
 
 function App() {
   return (
-    <Card>
-      <h1>Test</h1>
-    </Card>
+    <Wrapper>
+      <h1>My expense</h1>
+      <RegForm />
+    </Wrapper>
   );
 }
 
