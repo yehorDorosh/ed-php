@@ -3,6 +3,7 @@
 .input {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   font-size: 0.75rem;
 
   @include t {
@@ -21,7 +22,25 @@
 
     &:focus,
     &:focus-visible {
-      box-shadow: 0 0 3px 2px $primary;
+      box-shadow: 0 0 3px 2px $secondary;
+    }
+  }
+
+  .error {
+    width: 100%;
+    
+    p {
+      width: 50%;
+      margin: 4px 0 0 auto;
+      color: $alarm-color;
+      text-align: left;
+      font-size: 0.75rem;
+    }
+  }
+
+  &.invalid {
+    input {
+      border-color: $alarm-color;
     }
   }
 }
