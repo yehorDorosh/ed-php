@@ -29,12 +29,16 @@
   .error {
     width: 100%;
     
-    p {
+    &__text {
       width: 50%;
       margin: 4px 0 0 auto;
       color: $alarm-color;
       text-align: left;
-      font-size: 0.75rem;
+      font-size: 0.5rem;
+
+      @include t {
+        font-size: 0.75rem;
+      }
     }
   }
 

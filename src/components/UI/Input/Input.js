@@ -5,7 +5,7 @@ import classes from "./Input.module.scss";
 const Input = React.forwardRef((props, ref) => {
   const errorMsg = props.isValid === false ? (
     <div className={classes.error}>
-      <p>{props.errorMsg}</p>
+      <p className={classes.error__text}>{props.errorMsg}</p>
     </div>
   ) : null;
   return (
