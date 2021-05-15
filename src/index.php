@@ -43,6 +43,6 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
 
-    <!--<?php require_once './php/test-api.php'?>-->
+    <?php // require_once './php/test-api.php'?>
   </body>
 </html>

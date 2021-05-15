@@ -75,25 +75,6 @@ function readVarFromDb($varName, $tableName, $connConfig) {
   }
 }
 
-function clearTable($tableName, $connConfig) {
-  $response = [
-    "error"=>FALSE,
-    "errorMessage"=>""
-  ];
-  // Connection
-  $conn = connToDb($connConfig, $response);
-  if (!$conn) return $response;
-
-  $sql = "DELETE FROM $tableName";
-  if ($conn->query($sql) === FALSE) {
-    $response["error"] = TRUE;
-    $response["errorMessage"] = "Error deleting record: " . $conn->error;
-    return $response;
-  }
-  $conn->close();
-  return $response;
-}
-
 function deleteVar($varName, $tableName, $connConfig) {
   $response = [
     "error"=>FALSE,

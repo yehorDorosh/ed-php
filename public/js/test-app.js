@@ -20,7 +20,7 @@ const apiDelete = {
 }
 
 function checkApi() {
-  fetch(`${host}/api/api.php/`, {
+  fetch(`${host}/api/vars.php/`, {
     method: 'POST',
     body: JSON.stringify(api)
   })
@@ -38,7 +38,7 @@ function checkApi() {
 }
 
 function checkApiDelete() {
-  fetch(`${host}/api/api.php/`, {
+  fetch(`${host}/api/vars.php/`, {
     method: 'DELETE',
     body: JSON.stringify(apiDelete)
   })
@@ -56,7 +56,7 @@ function checkApiDelete() {
 }
 
 function checkApiGet() {
-  fetch(`${host}/api/api.php?readVarName=egor`)
+  fetch(`${host}/api/vars.php?readVarName=egor`)
   .then(response => {
     if (response.ok) {
       return response.json();

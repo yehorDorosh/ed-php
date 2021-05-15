@@ -1,2 +1,2 @@
 <?php
-include './api/api.php';
+include './api/vars.php';

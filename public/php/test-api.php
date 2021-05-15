@@ -11,12 +11,12 @@
 <form action="<?php echo $_SERVER["PHP_SELF"];?>" method="POST">
   <div>
     <label for="input-text">Save var: </label>
-    <input id="input-text" type="text" name="saveVarName" placeholder="text"/>
-    <input id="input-text" type="text" name="saveVarValue" placeholder="text"/>
+    <input id="input-text-1" type="text" name="saveVarName" placeholder="text"/>
+    <input id="input-text-2" type="text" name="saveVarValue" placeholder="text"/>
   </div>
   <div>
     <label for="input-text">Read var: </label>
-    <input id="input-text" type="text" name="readVarName" placeholder="text"/>
+    <input id="input-text-3" type="text" name="readVarName" placeholder="text"/>
   </div>
   <div>
     <button type="submit" name="send" value="send">Send</button>
