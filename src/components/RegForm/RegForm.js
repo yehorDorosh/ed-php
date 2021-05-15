@@ -35,7 +35,7 @@ function fieldReducer(state, action, validator) {
     };
   }
 
-  if (action.type === "SUBMIT") {
+  if (action.type === "SUBMIT_PREVENT") {
     return {
       isValid: validator(action.value),
     };
@@ -56,6 +56,7 @@ function RegForm() {
   const passwordInputRef = useRef();
   const checkPassInputRef = useRef();
   const [passIsEqual, setPassIsEqual] = useState(true);
+  const [isUniqueEmail, setIsUniqueEmail] = useState(true);
   const [emailState, dispathEmail] = useReducer(
     (state, action) => {
       return fieldReducer(state, action, validateEmail);
@@ -103,6 +104,7 @@ function RegForm() {
 
   function regHandler(e) {
     e.preventDefault();
+    setIsUniqueEmail(true);
     if (
       emailState.isValid &&
       passwordState.isValid &&
@@ -110,11 +112,33 @@ function RegForm() {
       passwordState.value === checkPassState.value
     ) {
       setPassIsEqual(true);
-      console.log("Reg is OK");
+      fetch(`${window.host}/api/registration.php/`, {
+        method: 'POST',
+        body: JSON.stringify({
+          email: emailState.value,
+          password: passwordState.value
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          console.log("Ошибка HTTP: " + response.status);
+        }
+      })
+      .then(data => {
+        console.log(data);
+        if (data.code === 0) {
+          //localStorage.setItem('isLoggin', 'true');
+        } else if (data.code === 1) {
+          setIsUniqueEmail(false);
+        }
+      })
+      .catch(error => console.log(error));
     } else {
-      fieldDispath(dispathEmail, emailInputRef, "SUBMIT");
-      fieldDispath(dispathPassword, passwordInputRef, "SUBMIT");
-      fieldDispath(dispathCheckPass, checkPassInputRef, "SUBMIT");
+      fieldDispath(dispathEmail, emailInputRef, "SUBMIT_PREVENT");
+      fieldDispath(dispathPassword, passwordInputRef, "SUBMIT_PREVENT");
+      fieldDispath(dispathCheckPass, checkPassInputRef, "SUBMIT_PREVENT");
     }
   }
 
@@ -131,8 +155,8 @@ function RegForm() {
             placeholder: "Enter email",
           }}
           onChange={inputChangeHandler}
-          isValid={emailState.isValid}
-          errorMsg={"Invalid email"}
+          isValid={isUniqueEmail && emailState.isValid}
+          errorMsg={isUniqueEmail === false ? "Current email already is exist" : "Invalid email"}
           onBlur={inputOnBlur}
           //value={emailState.value}
           customClasses={classes.row}
