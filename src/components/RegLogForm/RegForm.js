@@ -112,6 +112,8 @@ function RegForm() {
     e.preventDefault();
     setIsUniqueEmail(true);
     if (
+      emailState.value &&
+      passwordState.value &&
       emailState.isValid &&
       passwordState.isValid &&
       checkPassState.isValid &&
