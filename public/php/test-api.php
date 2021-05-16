@@ -1,9 +1,4 @@
 <?php //phpinfo(); ?>
-<?php if (getenv('ENV_MODE') === "prod") : ?>
-  <script>
-    window.ENV_MODE = "prod";
-  </script>
-<?php endif ?>
 
 <?php if ($phpAlert) : ?>
   <div><?php print $phpAlert ?></div>

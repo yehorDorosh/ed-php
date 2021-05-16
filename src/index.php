@@ -2,6 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <?php if (getenv('ENV_MODE') === "prod") : ?>
+      <script>
+        window.ENV_MODE = "prod";
+      </script>
+    <?php endif ?>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

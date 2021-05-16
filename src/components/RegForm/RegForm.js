@@ -1,8 +1,10 @@
-import React, { useReducer, useRef, useState } from "react";
+import React, { useReducer, useRef, useState, useContext } from "react";
 
 import Card from "../UI/Card/Card";
 import Input from "../UI/Input/Input";
 import Button from "../UI/Button/Button";
+import APIContext from "../../store/api-context";
+import AuthContext from "../../store/auth-context";
 
 import classes from "./RegForm.module.scss";
 
@@ -52,6 +54,8 @@ const defaultFieldState = {
 };
 
 function RegForm() {
+  const ctxAPI = useContext(APIContext);
+  const ctxAuth = useContext(AuthContext);
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const checkPassInputRef = useRef();
@@ -112,7 +116,7 @@ function RegForm() {
       passwordState.value === checkPassState.value
     ) {
       setPassIsEqual(true);
-      fetch(`${window.host}/api/registration.php/`, {
+      fetch(`${ctxAPI.host}/api/registration.php/`, {
         method: 'POST',
         body: JSON.stringify({
           email: emailState.value,
@@ -129,7 +133,7 @@ function RegForm() {
       .then(data => {
         console.log(data);
         if (data.code === 0) {
-          //localStorage.setItem('isLoggin', 'true');
+          ctxAuth.onLogin(data.email);
         } else if (data.code === 1) {
           setIsUniqueEmail(false);
         }
