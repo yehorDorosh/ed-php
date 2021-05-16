@@ -131,7 +131,6 @@ function RegForm() {
         }
       })
       .then(data => {
-        console.log(data);
         if (data.code === 0) {
           ctxAuth.onLogin(data.email);
         } else if (data.code === 1) {
@@ -151,11 +150,11 @@ function RegForm() {
       <form className={classes.form} onSubmit={regHandler}>
         <Input
           ref={emailInputRef}
-          id="userName"
+          id="userEmail"
           label="Your email"
           input={{
             type: "text",
-            name: "userName",
+            name: "userEmail",
             placeholder: "Enter email",
           }}
           onChange={inputChangeHandler}

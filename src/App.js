@@ -1,17 +1,21 @@
-import React, { useContext } from 'react';
+import React, { Fragment, useContext } from 'react';
 
+import Header from './components/Layout/Header/Header';
 import Wrapper from './components/Layout/Wrapper/Wrapper';
-import RegForm from './components/RegForm/RegForm';
+import RegLogForm from './components/RegLogForm/RegLogForm';
 import AuthContext from './store/auth-context';
 
 function App() {
   const ctxAuth = useContext(AuthContext);
-  console.log(ctxAuth);
+
   return (
-    <Wrapper>
-      <h1>My expense</h1>
-      <RegForm />
-    </Wrapper>
+    <Fragment>
+      <Header />
+      <Wrapper>
+        <h1>My expense</h1>
+        {!ctxAuth.isLoggedIn && <RegLogForm />}
+      </Wrapper>
+    </Fragment>
   );
 }
 

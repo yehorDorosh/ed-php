@@ -120,3 +120,31 @@ function saveDataToDB($value, $col, $tableName, $connConfig) {
   $conn->close();
   return $response;
 }
+
+function readCellFromRow($searchCol, $targetRow, $cellName, $tableName, $connConfig) {
+  $response = [
+    "data"=>NULL,
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+  // Read data
+  $sqlGetData="SELECT * FROM $tableName WHERE $searchCol='$targetRow'";
+  if ($conn->query($sqlGetData) === FALSE) {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Error when read data from db: " . $sqlGetData . "<br>" . $conn->error;
+    return $response;
+  }
+  $result = $conn->query($sqlGetData);
+  $conn->close();
+  if ($result->num_rows > 0) {
+    $response["data"] = $result->fetch_assoc()["$cellName"];
+    return $response;
+  } else {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "The varriable doesn't exist in table";
+    return $response;
+  }
+}
