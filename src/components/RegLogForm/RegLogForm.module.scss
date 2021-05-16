@@ -1,0 +1,14 @@
+@import '../../styles/vars.scss';
+
+.reg-from-block {
+  &__btn-row {
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  &__btn {
+    &.isActive {
+      color: $primary;
+    }
+  }
+}
