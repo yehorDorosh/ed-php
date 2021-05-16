@@ -4,9 +4,12 @@ import Header from './components/Layout/Header/Header';
 import Wrapper from './components/Layout/Wrapper/Wrapper';
 import RegLogForm from './components/RegLogForm/RegLogForm';
 import AuthContext from './store/auth-context';
+import Modal from './components/UI/Modal/Modal';
+import ModalContext from './store/modal-context';
 
 function App() {
   const ctxAuth = useContext(AuthContext);
+  const ctxModal = useContext(ModalContext);
 
   return (
     <Fragment>
@@ -15,6 +18,7 @@ function App() {
         <h1>My expense</h1>
         {!ctxAuth.isLoggedIn && <RegLogForm />}
       </Wrapper>
+      {ctxModal.isShown && <Modal onClose={ctxModal.onClose}>{ctxModal.content}</Modal>}
     </Fragment>
   );
 }

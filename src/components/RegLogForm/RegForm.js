@@ -1,10 +1,11 @@
-import React, { useReducer, useRef, useState, useContext } from "react";
+import React, { useReducer, useRef, useState, useContext, Fragment } from "react";
 
 import Card from "../UI/Card/Card";
 import Input from "../UI/Input/Input";
 import Button from "../UI/Button/Button";
 import APIContext from "../../store/api-context";
 import AuthContext from "../../store/auth-context";
+import ModalContext from "../../store/modal-context";
 
 import classes from "./RegForm.module.scss";
 
@@ -56,6 +57,7 @@ const defaultFieldState = {
 function RegForm() {
   const ctxAPI = useContext(APIContext);
   const ctxAuth = useContext(AuthContext);
+  const ctxModal = useContext(ModalContext);
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const checkPassInputRef = useRef();
@@ -132,6 +134,14 @@ function RegForm() {
       })
       .then(data => {
         if (data.code === 0) {
+          ctxModal.onShown(
+            <Fragment>
+              <p>Welcome!</p>
+              <p>You have been registered under the name:</p>
+              <p>{data.email}</p>
+              <Button btnText="OK" onClick={ctxModal.onClose} />
+            </Fragment>
+          );
           ctxAuth.onLogin(data.email);
         } else if (data.code === 1) {
           setIsUniqueEmail(false);

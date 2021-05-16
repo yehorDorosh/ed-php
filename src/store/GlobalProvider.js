@@ -1,11 +1,14 @@
 import { APIContextProvider } from './api-context';
 import { AuthContextProvider } from './auth-context';
+import { ModalContextProvider } from './modal-context';
 
 function GlobalProvider(props) {
   return (
     <APIContextProvider>
       <AuthContextProvider>
-        {props.children}
+        <ModalContextProvider>
+          {props.children}
+        </ModalContextProvider>
       </AuthContextProvider>
     </APIContextProvider>
   );
