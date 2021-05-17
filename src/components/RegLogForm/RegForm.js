@@ -8,6 +8,7 @@ import AuthContext from "../../store/auth-context";
 import ModalContext from "../../store/modal-context";
 
 import classes from "./RegForm.module.scss";
+import CardClasses from "../UI/Card/Card.module.scss";
 
 function validateEmail(email) {
   const re =
@@ -63,6 +64,7 @@ function RegForm() {
   const checkPassInputRef = useRef();
   const [passIsEqual, setPassIsEqual] = useState(true);
   const [isUniqueEmail, setIsUniqueEmail] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [emailState, dispathEmail] = useReducer(
     (state, action) => {
       return fieldReducer(state, action, validateEmail);
@@ -108,6 +110,53 @@ function RegForm() {
     }
   }
 
+  function fetchHandler() {
+    setIsLoading(true);
+    fetch(`${ctxAPI.host}/api/registration.php/`, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
+        email: emailState.value,
+        password: passwordState.value
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        setIsLoading(false);
+        return response.json();
+      } else {
+        throw new Error(`HTTP error - ${response.status}`);
+      }
+    })
+    .then(data => {
+      if (data.code === 0) {
+        ctxModal.onShown(
+          <Fragment>
+            <p>Welcome!</p>
+            <p>You have been registered under the name:</p>
+            <p>{data.email}</p>
+            <Button btnText="OK" onClick={ctxModal.onClose} />
+          </Fragment>
+        );
+        ctxAuth.onLogin(data.email);
+      } else if (data.code === 1) {
+        setIsUniqueEmail(false);
+      }
+    })
+    .catch(error => {
+      setIsLoading(false);
+      console.log(error);
+      ctxModal.onShown(
+        <Fragment>
+          <p>Registration was faild.</p>
+          <p>Some network problems was occur:</p>
+          <p>{String(error)}</p>
+          <Button btnText="OK" onClick={ctxModal.onClose} />
+        </Fragment>
+      );
+    });
+  }
+
   function regHandler(e) {
     e.preventDefault();
     setIsUniqueEmail(true);
@@ -120,36 +169,7 @@ function RegForm() {
       passwordState.value === checkPassState.value
     ) {
       setPassIsEqual(true);
-      fetch(`${ctxAPI.host}/api/registration.php/`, {
-        method: 'POST',
-        body: JSON.stringify({
-          email: emailState.value,
-          password: passwordState.value
-        })
-      })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          console.log("Ошибка HTTP: " + response.status);
-        }
-      })
-      .then(data => {
-        if (data.code === 0) {
-          ctxModal.onShown(
-            <Fragment>
-              <p>Welcome!</p>
-              <p>You have been registered under the name:</p>
-              <p>{data.email}</p>
-              <Button btnText="OK" onClick={ctxModal.onClose} />
-            </Fragment>
-          );
-          ctxAuth.onLogin(data.email);
-        } else if (data.code === 1) {
-          setIsUniqueEmail(false);
-        }
-      })
-      .catch(error => console.log(error));
+      fetchHandler();
     } else {
       fieldDispath(dispathEmail, emailInputRef, "SUBMIT_PREVENT");
       fieldDispath(dispathPassword, passwordInputRef, "SUBMIT_PREVENT");
@@ -158,7 +178,7 @@ function RegForm() {
   }
 
   return (
-    <Card>
+    <Card className={CardClasses['card--relative']}>
       <form className={classes.form} onSubmit={regHandler}>
         <Input
           ref={emailInputRef}
@@ -222,6 +242,11 @@ function RegForm() {
           />
         </div>
       </form>
+      {isLoading && (
+        <div className={classes.load}>
+          <div className={classes.loader}></div>
+        </div>
+      )}
     </Card>
   );
 }
