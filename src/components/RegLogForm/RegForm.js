@@ -114,7 +114,7 @@ function RegForm() {
     setIsLoading(true);
     fetch(`${ctxAPI.host}/api/registration.php/`, {
       method: 'POST',
-      mode: 'no-cors',
+      //mode: 'no-cors',
       body: JSON.stringify({
         email: emailState.value,
         password: passwordState.value
@@ -129,6 +129,7 @@ function RegForm() {
       }
     })
     .then(data => {
+      console.log(data.db.errorMessage);
       if (data.code === 0) {
         ctxModal.onShown(
           <Fragment>

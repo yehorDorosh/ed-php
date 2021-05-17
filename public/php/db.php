@@ -48,7 +48,7 @@ function createTable($tableName, $tableStructure, $connConfig) {
   if (!$tableIsExist) {
     if ($conn->query($sqlNewTable) === FALSE) {
       $response["error"] = TRUE;
-      $response["errorMessage"] = "Error creating table: " . $conn->error;
+      $response["errorMessage"] = "Error creating table: $sqlNewTable " . $conn->error;
       return $response;
     }
   }
