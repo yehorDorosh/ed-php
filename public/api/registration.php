@@ -23,10 +23,28 @@ password VARCHAR(50),
 reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ";
 
-$newUserTableStructure = "
-parameter TEXT,
-value TEXT
-";
+function createDefaulUserTable($userName, $connConfig, &$dbError) {
+  //Create user table
+  $newUserTableStructure = "
+  parameter TEXT,
+  value TEXT
+  ";
+  $defaultCategory = ['all'];
+  $defaultCategoryJSON = json_encode($defaultCategory);
+  $userTableInitData = [
+    [
+      'value' => "Expense categories, $defaultCategoryJSON",
+      'col' => "parameter, value"
+    ],
+    [
+      'value' => "Income categories, $defaultCategoryJSON",
+      'col' => "parameter, value"
+    ]
+  ];
+  $dbError = array_merge($dbError, createTable($userName, $newUserTableStructure, $connConfig));
+  $dbError = array_merge($dbError, saveMultyDataToDB($userTableInitData, $userName, $connConfig));
+}
+
 
 $dbError = array_merge($dbError, createTable($regTable, $usersTableStructure, $connConfig));
 
@@ -42,9 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$dbError["error"]) {
       $recivedData["errorMsg"] = "User already exist";
     } else {
       $dbError = array_merge($dbError, saveDataToDB("$userName, $email, $password", "user_name, email, password", $regTable, $connConfig));
-      $dbError = array_merge($dbError, createTable($userName, $newUserTableStructure, $connConfig));
-      $dbError = array_merge($dbError, saveDataToDB("Expense categories, all", "parameter, value", $userName, $connConfig));
-      $dbError = array_merge($dbError, saveDataToDB("Income categories, all", "parameter, value", $userName, $connConfig));
+      createDefaulUserTable($userName, $connConfig, $dbError);
       if (!$dbError["error"]) $recivedData["code"] = 0; // User was registered successful
     }
     $recivedData["password"] = preg_replace('/./', "*", $password);

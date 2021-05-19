@@ -121,6 +121,31 @@ function saveDataToDB($value, $col, $tableName, $connConfig) {
   return $response;
 }
 
+function saveMultyDataToDB($data, $tableName, $connConfig) {
+  $response = [
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+
+  foreach($data as $row) {
+    $value = implode(", ", array_map(function($str){return "'$str'";}, explode(", ", $row['value'])));
+    $col = $row['col'];
+    $sqlSaveValue = "INSERT INTO $tableName ($col) VALUES ($value)";
+    // write
+    if ($conn->query($sqlSaveValue) === FALSE) {
+      $response["error"] = TRUE;
+      $response["errorMessage"] = "Error: " . $sqlSaveValue . "<br>" . $conn->error;
+      return $response;
+    }
+  }
+
+  $conn->close();
+  return $response;
+}
+
 function readCellFromRow($searchCol, $targetRow, $cellName, $tableName, $connConfig) {
   $response = [
     "data"=>NULL,
@@ -147,4 +172,42 @@ function readCellFromRow($searchCol, $targetRow, $cellName, $tableName, $connCon
     $response["errorMessage"] = "The varriable doesn't exist in table";
     return $response;
   }
+}
+
+function deleteRow($cellContent, $col, $tableName, $connConfig) {
+  $response = [
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+
+  $sql = "DELETE FROM $tableName WHERE $col='$cellContent'";
+  if ($conn->query($sql) === FALSE) {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Error deleting record: " . $conn->error;
+    return $response;
+  }
+  $conn->close();
+  return $response;
+}
+
+function deleteTable($tableName, $connConfig) {
+  $response = [
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+
+  $sql = "DROP TABLE $tableName";
+  if ($conn->query($sql) === FALSE) {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Error droping table: " . $conn->error;
+    return $response;
+  }
+  $conn->close();
+  return $response;
 }
