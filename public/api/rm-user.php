@@ -27,9 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
     $email = $recivedData["email"];
     removeUser($email, $regTable, $connConfig, $dbError);
     if ($dbError['error']) {
-      $recivedData["error"] = true;
-      $recivedData["code"] = 1; // User already exist
-      $recivedData["errorMsg"] = $dbError['errorMessage'];
+      $recivedData["code"] = 1; // DB error
     } else {
       $recivedData["code"] = 0;
     }

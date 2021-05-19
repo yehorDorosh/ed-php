@@ -3,13 +3,37 @@ import { useContext, Fragment } from 'react';
 import Button from '../../UI/Button/Button';
 import Wrapper from '../Wrapper/Wrapper';
 import AuthContext from '../../../store/auth-context';
+import APIContext from '../../../store/api-context';
+import useHttp from '../../../hooks/use-http';
 
 import classes from './Header.module.scss';
 
 function Header() {
+  const { isLoading, userDeleteError, sendRequest: sendTaskRequest } = useHttp();
+  const ctxAPI = useContext(APIContext);
+
   const ctxAuth = useContext(AuthContext);
+
+  function deleteUser() {
+    sendTaskRequest(
+      {
+        url: `${ctxAPI.host}/api/rm-user.php/`,
+        method: 'DELETE',
+        body: {
+          email: ctxAuth.email
+        }
+      },
+      (data) => {
+        console.log(data);
+        ctxAuth.onLogout();
+      }
+    );
+  }
+
   const logOutBtn = (
     <Fragment>
+      {isLoading && !userDeleteError &&  <span>Deleting...</span>}
+      <Button btnText="Delete user" onClick={deleteUser}/>
       <span>{ctxAuth.email} </span>
       <Button btnText="Log out" onClick={ctxAuth.onLogout}/>
     </Fragment>
