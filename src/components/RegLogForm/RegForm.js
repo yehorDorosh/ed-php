@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useState, useContext, Fragment } from "react";
+import React, { useReducer, useRef, useState, useContext, Fragment, useEffect } from "react";
 
 import Card from "../UI/Card/Card";
 import Input from "../UI/Input/Input";
@@ -6,6 +6,7 @@ import Button from "../UI/Button/Button";
 import APIContext from "../../store/api-context";
 import AuthContext from "../../store/auth-context";
 import ModalContext from "../../store/modal-context";
+import useHttp from '../../hooks/use-http';
 
 import classes from "./RegForm.module.scss";
 import CardClasses from "../UI/Card/Card.module.scss";
@@ -64,7 +65,6 @@ function RegForm() {
   const checkPassInputRef = useRef();
   const [passIsEqual, setPassIsEqual] = useState(true);
   const [isUniqueEmail, setIsUniqueEmail] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [emailState, dispathEmail] = useReducer(
     (state, action) => {
       return fieldReducer(state, action, validateEmail);
@@ -83,6 +83,15 @@ function RegForm() {
     },
     { ...defaultFieldState }
   );
+  const { isLoading, isDone: registrationIsDone, sendRequest: sendRegistrationRequest } = useHttp();
+
+  const { onLogin: logginUser } = ctxAuth;
+  const { value: email}  = emailState;
+  
+  useEffect(() => {
+    console.log('call reg form');
+    if(registrationIsDone) logginUser(email);
+  }, [registrationIsDone, logginUser, email]);
 
   function inputChangeHandler(e) {
     if (e.target === emailInputRef.current)
@@ -111,51 +120,32 @@ function RegForm() {
   }
 
   function fetchHandler() {
-    setIsLoading(true);
-    fetch(`${ctxAPI.host}/api/registration.php/`, {
-      method: 'POST',
-      //mode: 'no-cors',
-      body: JSON.stringify({
-        email: emailState.value,
-        password: passwordState.value
-      })
-    })
-    .then(response => {
-      if (response.ok) {
-        setIsLoading(false);
-        return response.json();
-      } else {
-        throw new Error(`HTTP error - ${response.status}`);
+    sendRegistrationRequest(
+      {
+        url: `${ctxAPI.host}/api/registration.php/`,
+        method: 'POST',
+        body: {
+          email: emailState.value,
+          password: passwordState.value
+        }
+      },
+      (data) => {
+        if (data.code === 0) {
+          ctxModal.onShown(
+            <Fragment>
+              <p>Welcome!</p>
+              <p>You have been registered under the name:</p>
+              <p>{data.email}</p>
+              <Button btnText="OK" onClick={ctxModal.onClose} />
+            </Fragment>
+          );
+          return true;
+        } else if (data.code === 1) {
+          setIsUniqueEmail(false);
+          return false;
+        }
       }
-    })
-    .then(data => {
-      console.log(data.db.errorMessage);
-      if (data.code === 0) {
-        ctxModal.onShown(
-          <Fragment>
-            <p>Welcome!</p>
-            <p>You have been registered under the name:</p>
-            <p>{data.email}</p>
-            <Button btnText="OK" onClick={ctxModal.onClose} />
-          </Fragment>
-        );
-        ctxAuth.onLogin(data.email);
-      } else if (data.code === 1) {
-        setIsUniqueEmail(false);
-      }
-    })
-    .catch(error => {
-      setIsLoading(false);
-      console.log(error);
-      ctxModal.onShown(
-        <Fragment>
-          <p>Registration was faild.</p>
-          <p>Some network problems was occur:</p>
-          <p>{String(error)}</p>
-          <Button btnText="OK" onClick={ctxModal.onClose} />
-        </Fragment>
-      );
-    });
+    );
   }
 
   function regHandler(e) {

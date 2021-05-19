@@ -9,13 +9,13 @@ import useHttp from '../../../hooks/use-http';
 import classes from './Header.module.scss';
 
 function Header() {
-  const { isLoading, userDeleteError, sendRequest: sendTaskRequest } = useHttp();
+  const { isLoading, userDeleteError, sendRequest: sendDeleteUserRequest } = useHttp();
   const ctxAPI = useContext(APIContext);
 
   const ctxAuth = useContext(AuthContext);
 
   function deleteUser() {
-    sendTaskRequest(
+    sendDeleteUserRequest(
       {
         url: `${ctxAPI.host}/api/rm-user.php/`,
         method: 'DELETE',

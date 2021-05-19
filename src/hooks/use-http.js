@@ -6,6 +6,7 @@ import Button from '../components/UI/Button/Button';
 function useHttp() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isDone, setIsDone] = useState(null);
   const ctxModal = useContext(ModalContext);
   const { onShown: showErrorPopup, onClose: closeErrorPopup} = ctxModal;
 
@@ -22,7 +23,7 @@ function useHttp() {
       });
       if (!response.ok) throw new Error(`HTTP error - ${response.status}`);
       const data = await response.json();
-      applyData(data);
+      if (applyData(data) === true) setIsDone(true); 
     } catch (error) {
       console.log(error);
       setError(error.message || 'Something went wrong!');
@@ -39,6 +40,7 @@ function useHttp() {
 
   return {
     isLoading,
+    isDone,
     error,
     sendRequest,
   }
