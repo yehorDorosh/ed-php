@@ -89,7 +89,6 @@ function RegForm() {
   const { value: email}  = emailState;
   
   useEffect(() => {
-    console.log('call reg form');
     if(registrationIsDone) logginUser(email);
   }, [registrationIsDone, logginUser, email]);
 

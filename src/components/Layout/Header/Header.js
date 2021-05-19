@@ -24,7 +24,6 @@ function Header() {
         }
       },
       (data) => {
-        console.log(data);
         ctxAuth.onLogout();
       }
     );

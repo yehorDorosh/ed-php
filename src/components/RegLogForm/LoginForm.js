@@ -1,69 +1,61 @@
-import React, { useRef, useContext, useState, Fragment } from "react";
+import React, { useRef, useContext, useState, useEffect } from "react";
 
 import Card from "../UI/Card/Card";
 import Input from "../UI/Input/Input";
 import Button from "../UI/Button/Button";
 import APIContext from "../../store/api-context";
-import ModalContext from "../../store/modal-context";
 import AuthContext from "../../store/auth-context";
+import useHttp from '../../hooks/use-http';
 
 import classes from "./RegForm.module.scss";
 import CardClasses from "../UI/Card/Card.module.scss";
 
 function LoginForm() {
+  const [email, setEmail] = useState('');
   const [emailIsCorrect, setEmailIsCorrect] = useState(true);
   const [passwordIsCorrect, setPasswordIsCorrect] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const ctxAPI = useContext(APIContext);
   const ctxAuth = useContext(AuthContext);
-  const ctxModal = useContext(ModalContext);
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
 
+  const { isLoading, isDone: registrationIsDone, sendRequest: sendRegistrationRequest } = useHttp();
+
+  const { onLogin: logginUser } = ctxAuth;
+  
+  useEffect(() => {
+    if(registrationIsDone) logginUser(email);
+  }, [registrationIsDone, logginUser, email]);
+
   function fetchHandler(emailInput, passwordInput) {
-    setIsLoading(true);
-    fetch(`${ctxAPI.host}/api/login.php/`, {
-      method: 'POST',
-      body: JSON.stringify({
-        email: emailInput,
-        password: passwordInput
-      })
-    })
-    .then(response => {
-      if (response.ok) {
-        setIsLoading(false);
-        return response.json();
-      } else {
-        throw new Error(`HTTP error - ${response.status}`);
+    sendRegistrationRequest(
+      {
+        url: `${ctxAPI.host}/api/login.php/`,
+        method: 'POST',
+        body: {
+          email: emailInput,
+          password: passwordInput
+        }
+      },
+      (data) => {
+        if (data.code === 0) {
+          return true;
+        } else if (data.code === 1) {
+          setEmailIsCorrect(false);
+          return false;
+        } else if (data.code === 2) {
+          setPasswordIsCorrect(false);
+          return false;
+        }
       }
-    })
-    .then(data => {
-      if (data.code === 0) {
-        ctxAuth.onLogin(data.email);
-      } else if (data.code === 1) {
-        setEmailIsCorrect(false);
-      } else if (data.code === 2) {
-        setPasswordIsCorrect(false);
-      }
-    })
-    .catch(error => {
-      console.log(error);
-      setIsLoading(false);
-      ctxModal.onShown(
-        <Fragment>
-          <p>Registration was faild.</p>
-          <p>Some network problems was occur:</p>
-          <p>{String(error)}</p>
-          <Button btnText="OK" onClick={ctxModal.onClose} />
-        </Fragment>
-      );
-    });
+    );
   }
 
   function loginHandler(e) {
     e.preventDefault();
     const emailInput = emailInputRef.current.value;
     const passwordInput = passwordInputRef.current.value;
+    setEmail(emailInputRef.current.value);
     setEmailIsCorrect(true);
     setPasswordIsCorrect(true);
 

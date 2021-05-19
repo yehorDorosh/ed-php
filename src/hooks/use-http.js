@@ -13,7 +13,6 @@ function useHttp() {
   const sendRequest = useCallback(async (requestConfig, applyData) => {
     setIsLoading(true);
     setError(null);
-    console.log('Called use-http');
 
     try {
       const response = await fetch(requestConfig.url, {
