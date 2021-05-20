@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useState, useContext, Fragment, useEffect } from "react";
+import React, { useState, useContext, Fragment, useEffect } from "react";
 
 import Card from "../UI/Card/Card";
 import Input from "../UI/Input/Input";
@@ -7,6 +7,7 @@ import APIContext from "../../store/api-context";
 import AuthContext from "../../store/auth-context";
 import ModalContext from "../../store/modal-context";
 import useHttp from '../../hooks/use-http';
+import useInput from '../../hooks/use-input';
 
 import classes from "./RegForm.module.scss";
 import CardClasses from "../UI/Card/Card.module.scss";
@@ -21,102 +22,54 @@ function validatePassword(pass) {
   return String(pass).length >= 6;
 }
 
-function fieldReducer(state, action, validator) {
-  if (action.type === "USER_INPUT") {
-    if (state.isValid === false) {
-      return {
-        value: action.value,
-        isValid: validator(action.value),
-      };
-    }
-    return {
-      value: action.value,
-    };
-  }
-  if (action.type === "INPUT_BLUR") {
-    return {
-      value: action.value,
-      isValid: validator(action.value),
-    };
-  }
-
-  if (action.type === "SUBMIT_PREVENT") {
-    return {
-      isValid: validator(action.value),
-    };
-  }
-}
-
-function fieldDispath(dispath, ref, action) {
-  dispath({ type: action, value: ref.current.value.trim() });
-}
-
-const defaultFieldState = {
-  value: "",
-  isValid: null,
-};
-
 function RegForm() {
   const ctxAPI = useContext(APIContext);
   const ctxAuth = useContext(AuthContext);
   const ctxModal = useContext(ModalContext);
-  const emailInputRef = useRef();
-  const passwordInputRef = useRef();
-  const checkPassInputRef = useRef();
+
   const [passIsEqual, setPassIsEqual] = useState(true);
   const [isUniqueEmail, setIsUniqueEmail] = useState(true);
-  const [emailState, dispathEmail] = useReducer(
-    (state, action) => {
-      return fieldReducer(state, action, validateEmail);
-    },
-    { ...defaultFieldState }
-  );
-  const [passwordState, dispathPassword] = useReducer(
-    (state, action) => {
-      return fieldReducer(state, action, validatePassword);
-    },
-    { ...defaultFieldState }
-  );
-  const [checkPassState, dispathCheckPass] = useReducer(
-    (state, action) => {
-      return fieldReducer(state, action, validatePassword);
-    },
-    { ...defaultFieldState }
-  );
+
+  const {
+    value: email,
+    isValid: emailIsValid,
+    hasError: emailError,
+    valueChangeHandler: emailChangeHandler,
+    inputBlurHandler: emailBlurHandler,
+  } = useInput(validateEmail);
+  const {
+    value: password,
+    isValid: passwordIsValid,
+    hasError: passwordError,
+    valueChangeHandler: passwordChangeHandler,
+    inputBlurHandler: passwordBlurHandler,
+  } = useInput(validatePassword);
+  const {
+    value: checkPassword,
+    isValid: checkPasswordIsValid,
+    hasError: checkPasswordError,
+    isTouched: checkPasswordTouched,
+    valueChangeHandler: checkPasswordChangeHandler,
+    inputBlurHandler: checkPasswordBlurHandler,
+  } = useInput(validatePassword);
+
   const { isLoading, isDone: registrationIsDone, sendRequest: sendRegistrationRequest } = useHttp();
 
   const { onLogin: logginUser } = ctxAuth;
-  const { value: email}  = emailState;
   
   useEffect(() => {
-    if(registrationIsDone) logginUser(email);
+    if(registrationIsDone) {
+      logginUser(email);
+    }
   }, [registrationIsDone, logginUser, email]);
 
-  function inputChangeHandler(e) {
-    if (e.target === emailInputRef.current)
-      fieldDispath(dispathEmail, emailInputRef, "USER_INPUT");
-    if (e.target === passwordInputRef.current)
-      fieldDispath(dispathPassword, passwordInputRef, "USER_INPUT");
-    if (e.target === checkPassInputRef.current) {
-      fieldDispath(dispathCheckPass, checkPassInputRef, "USER_INPUT");
+  useEffect(() => {
+    if(checkPassword !== password && checkPasswordTouched) {
+      setPassIsEqual(false);
+    } else {
       setPassIsEqual(true);
     }
-  }
-
-  function inputOnBlur(e) {
-    if (e.target === emailInputRef.current)
-      fieldDispath(dispathEmail, emailInputRef, "INPUT_BLUR");
-    if (e.target === passwordInputRef.current)
-      fieldDispath(dispathPassword, passwordInputRef, "INPUT_BLUR");
-    if (e.target === checkPassInputRef.current) {
-      fieldDispath(dispathCheckPass, checkPassInputRef, "INPUT_BLUR");
-      if (passwordState.value === checkPassState.value) {
-        setPassIsEqual(true);
-      } else {
-        setPassIsEqual(false);
-      }
-    }
-  }
+  }, [checkPassword, password, checkPasswordTouched]);
 
   function fetchHandler() {
     sendRegistrationRequest(
@@ -124,8 +77,8 @@ function RegForm() {
         url: `${ctxAPI.host}/api/registration.php/`,
         method: 'POST',
         body: {
-          email: emailState.value,
-          password: passwordState.value
+          email: email,
+          password: password
         }
       },
       (data) => {
@@ -151,19 +104,19 @@ function RegForm() {
     e.preventDefault();
     setIsUniqueEmail(true);
     if (
-      emailState.value &&
-      passwordState.value &&
-      emailState.isValid &&
-      passwordState.isValid &&
-      checkPassState.isValid &&
-      passwordState.value === checkPassState.value
+      email &&
+      password &&
+      emailIsValid &&
+      passwordIsValid &&
+      checkPasswordIsValid &&
+      password === checkPassword
     ) {
       setPassIsEqual(true);
       fetchHandler();
     } else {
-      fieldDispath(dispathEmail, emailInputRef, "SUBMIT_PREVENT");
-      fieldDispath(dispathPassword, passwordInputRef, "SUBMIT_PREVENT");
-      fieldDispath(dispathCheckPass, checkPassInputRef, "SUBMIT_PREVENT");
+      emailBlurHandler();
+      passwordBlurHandler();
+      checkPasswordBlurHandler();
     }
   }
 
@@ -171,23 +124,21 @@ function RegForm() {
     <Card className={CardClasses['card--relative']}>
       <form className={classes.form} onSubmit={regHandler}>
         <Input
-          ref={emailInputRef}
           id="userEmail"
           label="Your email"
           input={{
-            type: "text",
+            type: "email",
             name: "userEmail",
             placeholder: "Enter email",
           }}
-          onChange={inputChangeHandler}
-          isValid={isUniqueEmail && emailState.isValid}
+          onChange={emailChangeHandler}
+          isValid={isUniqueEmail && !emailError}
           errorMsg={isUniqueEmail === false ? "Current email already is exist" : "Invalid email"}
-          onBlur={inputOnBlur}
+          onBlur={emailBlurHandler}
           //value={emailState.value}
           customClasses={classes.row}
         />
         <Input
-          ref={passwordInputRef}
           id="newPassword"
           label="Enter your password"
           input={{
@@ -195,14 +146,13 @@ function RegForm() {
             name: "newPassword",
             placeholder: "******",
           }}
-          onChange={inputChangeHandler}
-          isValid={passwordState.isValid}
+          onChange={passwordChangeHandler}
+          isValid={!passwordError}
           errorMsg={"Password shoud be great then 5 symbols"}
-          onBlur={inputOnBlur}
+          onBlur={passwordBlurHandler}
           customClasses={classes.row}
         />
         <Input
-          ref={checkPassInputRef}
           id="repeatPassword"
           label="Please repeat your password"
           input={{
@@ -210,14 +160,14 @@ function RegForm() {
             name: "repeatPassword",
             placeholder: "******",
           }}
-          onChange={inputChangeHandler}
-          isValid={passIsEqual && checkPassState.isValid}
+          onChange={checkPasswordChangeHandler}
+          isValid={passIsEqual && !checkPasswordError}
           errorMsg={
             passIsEqual
               ? "Password shoud be great then 5 symbols"
               : "The passwords should be match"
           }
-          onBlur={inputOnBlur}
+          onBlur={checkPasswordBlurHandler}
           customClasses={classes.row}
         />
         <div className={`${classes["btn-row"]} ${classes.row}`}>
