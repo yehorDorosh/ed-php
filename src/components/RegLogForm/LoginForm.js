@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import Card from "../UI/Card/Card";
 import Input from "../UI/Input/Input";
@@ -6,18 +6,43 @@ import Button from "../UI/Button/Button";
 import APIContext from "../../store/api-context";
 import AuthContext from "../../store/auth-context";
 import useHttp from '../../hooks/use-http';
+import useInput from '../../hooks/use-input';
 
 import classes from "./RegForm.module.scss";
 import CardClasses from "../UI/Card/Card.module.scss";
 
+function validateEmail(email) {
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+
+function validatePassword(pass) {
+  return String(pass).length >= 6;
+}
+
 function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [emailIsCorrect, setEmailIsCorrect] = useState(true);
-  const [passwordIsCorrect, setPasswordIsCorrect] = useState(true);
+  const [emailIsCorrect, setEmailIsCorrect] = useState(null);
+  const [passwordIsCorrect, setPasswordIsCorrect] = useState(null);
   const ctxAPI = useContext(APIContext);
   const ctxAuth = useContext(AuthContext);
-  const emailInputRef = useRef();
-  const passwordInputRef = useRef();
+
+  const {
+    value: email,
+    isValid: emailIsValid,
+    hasError: emailError,
+    isTouched: emailIsTouched,
+    valueChangeHandler: emailChangeHandler,
+    inputBlurHandler: emailBlurHandler,
+  } = useInput(validateEmail);
+  const {
+    value: password,
+    isValid: passwordIsValid,
+    hasError: passwordError,
+    isTouched: passwordIsTouched,
+    valueChangeHandler: passwordChangeHandler,
+    inputBlurHandler: passwordBlurHandler,
+  } = useInput(validatePassword);
 
   const { isLoading, isDone: registrationIsDone, sendRequest: sendRegistrationRequest } = useHttp();
 
@@ -26,6 +51,11 @@ function LoginForm() {
   useEffect(() => {
     if(registrationIsDone) logginUser(email);
   }, [registrationIsDone, logginUser, email]);
+
+  useEffect(() => {
+    if (emailIsTouched) setEmailIsCorrect(true);
+    if (passwordIsTouched) setPasswordIsCorrect(true);
+  }, [emailIsTouched, passwordIsTouched]);
 
   function fetchHandler(emailInput, passwordInput) {
     sendRegistrationRequest(
@@ -53,38 +83,32 @@ function LoginForm() {
 
   function loginHandler(e) {
     e.preventDefault();
-    const emailInput = emailInputRef.current.value;
-    const passwordInput = passwordInputRef.current.value;
-    setEmail(emailInputRef.current.value);
     setEmailIsCorrect(true);
     setPasswordIsCorrect(true);
 
-    if (emailInput && passwordInput) {
-      fetchHandler(emailInput, passwordInput);
-    } else {
-      setEmailIsCorrect(false);
-      setPasswordIsCorrect(false);
+    if (email && password && emailIsValid && passwordIsValid) {
+      fetchHandler(email, password);
     }
   }
-  
+
   return (
     <Card className={CardClasses['card--relative']}>
       <form className={classes.form} onSubmit={loginHandler}>
         <Input
-          ref={emailInputRef}
           id="userEmail"
           label="Your email"
           input={{
-            type: "text",
+            type: "email",
             name: "userEmail",
             placeholder: "Enter email",
           }}
-          isValid={emailIsCorrect}
-          errorMsg="Incorect email"
+          isValid={!emailError && emailIsCorrect}
+          errorMsg={emailIsCorrect ? "Invalid email" : "Incorect email"}
           customClasses={classes.row}
+          onChange={emailChangeHandler}
+          onBlur={emailBlurHandler}
         />
         <Input
-          ref={passwordInputRef}
           id="newPassword"
           label="Enter your password"
           input={{
@@ -92,9 +116,11 @@ function LoginForm() {
             name: "newPassword",
             placeholder: "******",
           }}
-          isValid={passwordIsCorrect}
-          errorMsg="Incorect password"
+          isValid={!passwordError && passwordIsCorrect}
+          errorMsg={passwordIsCorrect ? "Invalid password" : "Incorect password"}
           customClasses={classes.row}
+          onChange={passwordChangeHandler}
+          onBlur={passwordBlurHandler}
         />
         <div className={`${classes["btn-row"]} ${classes.row}`}>
           <Button
