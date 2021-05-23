@@ -5,6 +5,7 @@ import App from './App';
 import GlobalProvider from './store/GlobalProvider';
 
 import './styles/normalize.css';
+import './styles/utils/display.scss';
 import './styles/index.scss';
 
 

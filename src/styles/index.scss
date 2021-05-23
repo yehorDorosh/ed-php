@@ -10,3 +10,12 @@ html {
   line-height: $main-line-height;
   min-width: 320px;
 }
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}

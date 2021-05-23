@@ -1,0 +1,24 @@
+@import '../../styles/components/loader.scss';
+
+$row-half-interval: 8px;
+
+.category-list {
+  position: relative;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: $row-half-interval;
+  margin-bottom: $row-half-interval;
+
+  &:first-child {
+    margin-top: 0;
+    margin-bottom: $row-half-interval;
+  }
+
+  &:last-child {
+    margin-top: $row-half-interval;
+    margin-bottom: 0;
+  }
+}

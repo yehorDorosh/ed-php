@@ -18,8 +18,10 @@ const Input = React.forwardRef((props, ref) => {
       <input
         {...props.input}
         ref={ref}
+        id={props.id}
         onChange={props.onChange}
         onBlur={props.onBlur}
+        onClick={props.onClick}
         value={props.value}
       />
       {errorMsg}

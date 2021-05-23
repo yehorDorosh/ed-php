@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 const Modal = React.createContext({
   isShown: false,
@@ -11,15 +11,15 @@ export function ModalContextProvider(props) {
   const [isShown, setIsShown] = useState(false);
   const [content, setContent] = useState(null);
 
-  function onShownHandler(content) {
+  const onShownHandler =  useCallback((content) => {
     setIsShown(true);
     setContent(content);
-  }
+  }, []);
 
-  function onCloseHandler() {
+  const onCloseHandler = useCallback(() => {
     setIsShown(false);
     setContent(null);
-  }
+  }, []);
 
   return (
     <Modal.Provider
