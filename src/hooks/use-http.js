@@ -29,7 +29,7 @@ function useHttp() {
       showErrorPopup(
         <Fragment>
           <p>Some network problems was occur:</p>
-          <p>{String(error)}</p>
+          <p>{error.message}</p>
           <Button btnText="OK" onClick={closeErrorPopup} />
         </Fragment>
       );
