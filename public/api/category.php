@@ -8,8 +8,13 @@ $dbError = [
   "errorMessage"=>""
 ];
 
+$categoryMap = [
+  'expense'=>'Expense categories',
+  'income'=>'Income categories'
+];
+
 function addCategory($newCategoryName, $categoryType, $userConfigTable, $connConfig, &$dbError) {
-  $newCategoryName = trim($newCategoryName);
+  $newCategoryName = strtolower(trim($newCategoryName));
   $response = readCellFromRow('parameter', $categoryType, 'value', $userConfigTable, $connConfig);
   if($response['error']) {
     $dbError = $response;
@@ -18,7 +23,27 @@ function addCategory($newCategoryName, $categoryType, $userConfigTable, $connCon
   $categoryArr = json_decode($response['data']);
   if (in_array($newCategoryName, $categoryArr)) return json_encode($categoryArr);
   array_push($categoryArr, $newCategoryName);
+  $categoryArr = array_values($categoryArr);
   return json_encode($categoryArr);
+}
+
+function removeCategory($categoryName, $categoryType, $userConfigTable, $connConfig, &$dbError) {
+  $categoryName = trim($categoryName);
+  $response = readCellFromRow('parameter', $categoryType, 'value', $userConfigTable, $connConfig);
+  if($response['error'] || !is_array(json_decode($response['data']))) {
+    $dbError = $response;
+    return;
+  }
+  $categoryArr = json_decode($response['data']);
+  if (in_array($categoryName, $categoryArr)) {
+    if (($key = array_search($categoryName, $categoryArr)) !== false) {
+      unset($categoryArr[$key]);
+    }
+    $categoryArr = array_values($categoryArr);
+    return json_encode($categoryArr);
+  } else {
+    return json_encode($categoryArr);
+  }
 }
 
 if (
@@ -43,7 +68,7 @@ if (
     echo json_encode($response);
 }
 
-if ($_SERVER["REQUEST_METHOD"]) {
+if ($_SERVER["REQUEST_METHOD"] == 'POST') {
   $recivedData = json_decode(file_get_contents('php://input'), true);
   if (is_array($recivedData)) {
     $email = $recivedData["email"];
@@ -69,4 +94,28 @@ if ($_SERVER["REQUEST_METHOD"]) {
     $recivedData["db"] = $dbError;
     echo json_encode($recivedData);
   }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
+  $recivedData = json_decode(file_get_contents('php://input'), true);
+  if (is_array($recivedData)) {
+    $email = $recivedData["email"];
+    $userName = strstr($email, "@", true);
+    if ($recivedData["categoryName"] && checkTable($userName, $connConfig) && $recivedData["categoryName"] !== 'all') {
+      $newCategoryList = removeCategory($recivedData["categoryName"], $categoryMap[$recivedData["categoryType"]], $userName, $connConfig, $dbError);
+      $dbError = saveValueToDbCell($categoryMap[$recivedData["categoryType"]], 'parameter', $newCategoryList, 'value', $userName, $connConfig);
+      if (!$dbError["error"]) {
+        $recivedData["code"] = 0;
+      } else {
+        $recivedData["code"] = 1; // DB error
+        $recivedData["errorMsg"] = "DB error";
+      }
+    } else {
+      $recivedData["code"] = 2; // Invalid category name or user config table doesn't exist
+      $recivedData["errorMsg"] = "Invalid category name or user config table doesn't exist";
+    }
+  }
+
+  $recivedData["db"] = $dbError;
+  echo json_encode($recivedData);
 }

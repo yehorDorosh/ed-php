@@ -11,6 +11,7 @@ $row-half-interval: 8px;
   justify-content: space-between;
   margin-top: $row-half-interval;
   margin-bottom: $row-half-interval;
+  min-height: 35px;
 
   &:first-child {
     margin-top: 0;
@@ -20,5 +21,10 @@ $row-half-interval: 8px;
   &:last-child {
     margin-top: $row-half-interval;
     margin-bottom: 0;
+  }
+
+  & > span {
+    text-transform: capitalize;
+    line-height: 35px;
   }
 }
