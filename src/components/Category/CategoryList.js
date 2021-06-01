@@ -93,9 +93,9 @@ function CategoryList(props) {
       {categoryList.map((item) => {
         const id = `${item}-${uuidv4()}`;
         return (
-          <li key={id} id={id} className={classes.row}>
+          <li key={id} id={id} className={`${classes.row} ${item === 'all' ? classes['row--first'] : '' }`}>
             <span>{item}</span>
-            {item !== "all" && (
+            {item !== 'all' && (
               <Button
                 btnText="Delete category"
                 onClick={removeCategory.bind(null, item)}

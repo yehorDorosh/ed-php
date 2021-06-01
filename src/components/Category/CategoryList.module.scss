@@ -4,6 +4,8 @@ $row-half-interval: 8px;
 
 .category-list {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .row {
@@ -13,11 +15,6 @@ $row-half-interval: 8px;
   margin-bottom: $row-half-interval;
   min-height: 35px;
 
-  &:first-child {
-    margin-top: 0;
-    margin-bottom: $row-half-interval;
-  }
-
   &:last-child {
     margin-top: $row-half-interval;
     margin-bottom: 0;
@@ -26,5 +23,11 @@ $row-half-interval: 8px;
   & > span {
     text-transform: capitalize;
     line-height: 35px;
+  }
+
+  &--first {
+    order: -1;
+    margin-top: 0;
+    margin-bottom: $row-half-interval;
   }
 }
