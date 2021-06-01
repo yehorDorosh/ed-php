@@ -9,6 +9,7 @@ import classes from './Category.module.scss';
 function Category() {
   const [isExpand, setIsExpand] = useState(false);
   const [currentCategoryType, setCurrentCategoryType] = useState('expense');
+  const [rerender, setRerender] = useState(false);
 
   function expandCategoryBlock() {
     isExpand ? setIsExpand(false) : setIsExpand(true);
@@ -32,8 +33,11 @@ function Category() {
         </button>
       </div>
       <div className={`${classes.category} ${isExpand ? 'shown' :'hidden'}`}>
-        <CategoryForm liftUpCategoryType={getCurrentCategoryType}/>
-        <CategoryList categoryType={currentCategoryType} />
+        <CategoryForm
+          rerender={setRerender}
+          liftUpCategoryType={getCurrentCategoryType}
+        />
+        <CategoryList categoryType={currentCategoryType} rerender={rerender}/>
       </div>
     </Card>
   );

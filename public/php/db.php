@@ -68,13 +68,7 @@ function valueIsExistInCol($tableName, $value, $col, $connConfig) {
   return true;
 }
 
-function saveValueToColumn($value, $col, $tableName, $connConfig) {
-  function varIsExist($tableName, $value, $col, $conn) {
-    $sql="SELECT $col FROM $tableName WHERE $col='$value'";
-    $result = $conn->query($sql);
-    if (!$result->num_rows) return false;
-    return true;
-  }
+function saveValueToDbCell($rowName, $rowNameCol, $value, $valueCol, $tableName, $connConfig) {
   $response = [
     "error"=>FALSE,
     "errorMessage"=>""
@@ -83,13 +77,13 @@ function saveValueToColumn($value, $col, $tableName, $connConfig) {
   $conn = connToDb($connConfig, $response);
   if (!$conn) return $response;
   // write
-  if (varIsExist($tableName, $value, $col, $conn)) {
+  if (valueIsExistInCol($tableName, $rowName, $rowNameCol, $connConfig)) {
     $sqlSaveValue = "UPDATE $tableName
-      SET $col = '$value'
-      WHERE $col = '$value'";
+      SET $valueCol = '$value'
+      WHERE $rowNameCol = '$rowName'";
   } else {
-    $sqlSaveValue = "INSERT INTO $tableName ($col)
-      VALUES ('$value')";
+    $sqlSaveValue = "INSERT INTO $tableName ($rowNameCol, $valueCol)
+      VALUES ('$rowName', '$value')";
   }
   if ($conn->query($sqlSaveValue) === FALSE) {
     $response["error"] = TRUE;
@@ -210,4 +204,18 @@ function deleteTable($tableName, $connConfig) {
   }
   $conn->close();
   return $response;
+}
+
+function checkTable($tableName, $connConfig) {
+  $response = [
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+  // Check table
+  $tableIsExist = $conn->query("select 1 from `$tableName` LIMIT 1");
+  $conn->close();
+  return $tableIsExist;
 }

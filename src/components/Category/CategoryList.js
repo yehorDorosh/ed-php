@@ -18,7 +18,7 @@ function CategoryList(props) {
 
   const { isLoading, sendRequest: getCategories } = useHttp();
 
-  const { categoryType } = props;
+  const { categoryType, rerender } = props;
   const { host } = ctxAPI;
   const { email } = ctxAuth;
   const { onShown: showErrorPopup, onClose: closeErrorPopup} = ctxModal;
@@ -42,7 +42,7 @@ function CategoryList(props) {
         if (Array.isArray(newCategoryList)) setCategoryList(newCategoryList);
       }
     });
-  }, [categoryType, host, email, getCategories, showErrorPopup, closeErrorPopup]);
+  }, [categoryType, host, email, rerender, getCategories, showErrorPopup, closeErrorPopup]);
   
   return (
     <ul className={classes['category-list']}>
