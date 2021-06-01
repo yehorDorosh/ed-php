@@ -28,7 +28,7 @@ const useInput = (validateValue) => {
   const hasError = !valueIsValid && inputState.isTouched;
 
   const valueChangeHandler = (event) => {
-    dispatch({ type: 'INPUT', value: event.target.value.trim() });
+    dispatch({ type: 'INPUT', value: event.target.value });
   };
 
   const inputBlurHandler = (event) => {
