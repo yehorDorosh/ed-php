@@ -33,7 +33,7 @@ function Header() {
     <Fragment>
       {isLoading && !userDeleteError &&  <span>Deleting...</span>}
       <Button btnText="Delete user" onClick={deleteUser}/>
-      <span>{ctxAuth.email} </span>
+      <span> {ctxAuth.email} </span>
       <Button btnText="Log out" onClick={ctxAuth.onLogout}/>
     </Fragment>
   );
