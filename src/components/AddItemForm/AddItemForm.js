@@ -5,16 +5,56 @@ import Input from '../UI/Input/Input';
 import Button from '../UI/Button/Button';
 import Card from '../UI/Card/Card';
 import Select from '../UI/Select/Select';
+import useInput from '../../hooks/use-input';
 
 import classes from './AddItemForm.module.scss';
 import cardClasses from '../UI/Card/Card.module.scss';
 
+function currentDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = `${today.getMonth() + 1}`.length < 2 ? `0${today.getMonth() + 1}` : today.getMonth() + 1;
+  const day = today.getDate().toString().length < 2 ? `0${today.getDate()}` : today.getDate();
+
+  return `${year}-${month}-${day}`
+}
+
 function AddItemForm() {
   const [isExpand, setIsExpand] = useState(false);
   const [categoryType, setCategoryType] = useState('expense');
-  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const category = useSelector((state) => state.category[categoryType]);
+  const categories = useSelector((state) => state.category[categoryType]);
+
+  const {
+    value: category,
+    isValid: categoryIsValid,
+    valueChangeHandler: categoryChangeHandler,
+    inputBlurHandler: categoryBlurHandler,
+  } = useInput((category) => categories.includes(category), 'all');
+  const {
+    value: name,
+    isValid: nameIsValid,
+    hasError: nameError,
+    valueChangeHandler: nameChangeHandler,
+    inputBlurHandler: nameBlurHandler,
+    reset: clearName
+  } = useInput((name) => !!name);
+  const {
+    value: amount,
+    isValid: amountIsValid,
+    hasError: amountError,
+    valueChangeHandler: amountChangeHandler,
+    inputBlurHandler: amountBlurHandler,
+    reset: clearAmount
+  } = useInput((amount) => !!+amount);
+  const {
+    value: date,
+    isValid: dateIsValid,
+    hasError: dateError,
+    valueChangeHandler: dateChangeHandler,
+    inputBlurHandler: dateBlurHandler,
+    //reset: clearDate
+  } = useInput((date) => !!date, currentDate());
 
   function expandForm() {
     isExpand ? setIsExpand(false) : setIsExpand(true);
@@ -24,8 +64,23 @@ function AddItemForm() {
     setCategoryType(e.target.value);
   }
 
-  function categoryHandler(e) {
-    setSelectedCategory(e.target.value);
+  function submitDataHandler(e) {
+    e.preventDefault();
+    if (
+      (categoryType === 'expense' || categoryType === 'income') &&
+      categoryIsValid &&
+      nameIsValid &&
+      amountIsValid &&
+      dateIsValid
+    ) {
+      console.log(categoryType, category, name, amount, date);
+      clearName();
+      clearAmount();
+    } else {
+      nameBlurHandler();
+      amountBlurHandler();
+      dateBlurHandler();
+    }
   }
 
   return (
@@ -41,7 +96,10 @@ function AddItemForm() {
           Add Expense/Income
         </button>
       </div>
-      <form className={`${classes.form} ${isExpand ? 'shown' :'hidden'}`}>
+      <form
+        onSubmit={submitDataHandler}
+        className={`${classes.form} ${isExpand ? 'shown' :'hidden'}`}
+      >
         <div className={`${classes.row} ${classes['category-select']}`}>
           <Input
             id="addCategoryTypeExpense"
@@ -67,23 +125,59 @@ function AddItemForm() {
             onClick={categoryTypeHandler}
           />
         </div>
-        <div className={`${classes.row}`}>
-          <Select
-            name='category'
-            id='categorySelect'
-            label='Choose category'
-            option={category}
-            onChange={categoryHandler}
-            value={selectedCategory}
-          />
-        </div>
-        <div className={`${classes.row}`}>
+        <Select
+          name='category'
+          id='categorySelect'
+          label='Choose category'
+          option={categories}
+          value={category}
+          customClasses={classes.row}
+          onChange={categoryChangeHandler}
+          onBlur={categoryBlurHandler}
+        />
         <Input
+          input={{
+              type: 'text',
+              name: 'itemName',
+          }}
           label="Item name"
           customClasses={classes.row}
-          errorMsg={"Category name can't be empty"}
+          onChange={nameChangeHandler}
+          onBlur={nameBlurHandler}
+          isValid={!nameError}
+          errorMsg={"Item name can't be empty"}
+          value={name}
         />
-        </div>
+        <Input
+          input={{
+            type: 'number',
+            name: 'itemAmount',
+            min: 0,
+            max: 999999999,
+            step: '.1',
+            placeholder: '0.00€'
+          }}
+          label="Item amount"
+          customClasses={classes.row}
+          onChange={amountChangeHandler}
+          onBlur={amountBlurHandler}
+          isValid={!amountError}
+          errorMsg={"Item amount can't be empty or zero"}
+          value={amount}
+        />
+        <Input
+          input={{
+            type: 'date',
+            name: 'itemDate',
+          }}
+          label="Date"
+          customClasses={classes.row}
+          onChange={dateChangeHandler}
+          onBlur={dateBlurHandler}
+          isValid={!dateError}
+          errorMsg={"Date can't be empty"}
+          value={date}
+        />
         <div className={`${classes["btn-row"]} ${classes.row}`}>
           <Button btnText="Add item" />
         </div>
