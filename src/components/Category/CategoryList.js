@@ -1,4 +1,5 @@
-import React, { useEffect, useContext, useState, Fragment } from "react";
+import React, { useEffect, useContext, Fragment } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from "uuid";
 
 import Button from "../UI/Button/Button";
@@ -6,15 +7,17 @@ import useHttp from "../../hooks/use-http";
 import APIContext from "../../store/api-context";
 import AuthContext from "../../store/auth-context";
 import ModalContext from "../../store/modal-context";
+import { categoryActions } from '../../store/category-slice';
 
 import classes from "./CategoryList.module.scss";
 import classesButton from "../../components/UI/Button/Button.module.scss";
 
 function CategoryList(props) {
+  const dispatch = useDispatch();
+
   const ctxAPI = useContext(APIContext);
   const ctxAuth = useContext(AuthContext);
   const ctxModal = useContext(ModalContext);
-  const [categoryList, setCategoryList] = useState([]);
 
   const { isLoading, sendRequest: getCategories } = useHttp();
   const {
@@ -23,6 +26,10 @@ function CategoryList(props) {
   } = useHttp();
 
   const { categoryType, rerender } = props;
+  const categoryList = useSelector((state) => {
+    if (categoryType === `expense`) return state.category.expense;
+    if (categoryType === `income`) return state.category.income;
+  });
   const { host } = ctxAPI;
   const { email } = ctxAuth;
   const { onShown: showErrorPopup, onClose: closeErrorPopup } = ctxModal;
@@ -30,25 +37,24 @@ function CategoryList(props) {
   useEffect(() => {
     getCategories(
       {
-        url: `${host}/api/category.php?email=${email}&categoryType=${categoryType}`,
+        url: `${host}/api/category.php?email=${email}&categoryType=expense`,
       },
       (response) => {
-        if (response.error) {
-          showErrorPopup(
-            <Fragment>
-              <p>Error occured, when tried get list of categories:</p>
-              <p>{response.errorMessage}</p>
-              <Button btnText="OK" onClick={closeErrorPopup} />
-            </Fragment>
-          );
-          console.log(
-            `Error occured, when tried get list of categories: ${response.errorMessage}`
-          );
-        } else {
-          const newCategoryList = JSON.parse(response.data);
-          if (Array.isArray(newCategoryList))
-            setCategoryList(newCategoryList.sort());
-        }
+        dispatch(categoryActions.fetchedCategoryHandler({
+          data: response.data,
+          categoryType: 'expense'
+        }));
+      }
+    );
+    getCategories(
+      {
+        url: `${host}/api/category.php?email=${email}&categoryType=income`,
+      },
+      (response) => {
+        dispatch(categoryActions.fetchedCategoryHandler({
+          data: response.data,
+          categoryType: 'income'
+        }));
       }
     );
   }, [
@@ -57,8 +63,7 @@ function CategoryList(props) {
     email,
     rerender,
     getCategories,
-    showErrorPopup,
-    closeErrorPopup,
+    dispatch
   ]);
 
   function removeCategory(categoryName) {
@@ -74,7 +79,10 @@ function CategoryList(props) {
       },
       (data) => {
         if (data.code === 0) {
-          setCategoryList(categoryList.filter((item) => item !== categoryName));
+          dispatch(categoryActions.setCategoryList({
+            category: categoryList.filter((item) => item !== categoryName),
+            categoryType
+          }));
         } else if (data.code === 1) {
           showErrorPopup(
             <Fragment>
@@ -90,7 +98,7 @@ function CategoryList(props) {
 
   return (
     <ul className={classes["category-list"]}>
-      {categoryList.map((item) => {
+      {categoryList && categoryList.map((item) => {
         const id = `${item}-${uuidv4()}`;
         return (
           <li key={id} id={id} className={`${classes.row} ${item === 'all' ? classes['row--first'] : '' }`}>

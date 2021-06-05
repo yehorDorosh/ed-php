@@ -1,4 +1,5 @@
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import classes from './Select.module.scss';
 
@@ -14,8 +15,9 @@ const Select = React.forwardRef((props, ref) => {
         value={props.value}
       >
         {props.option && props.option.map((option) => {
+          const id = `${option}-${uuidv4()}`;
           return (
-            <option selected={`${option === 'all' && 'selected'}`}>{option}</option>
+            <option key={id} value={option}>{option}</option>
           );
         })}
     </select>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import Input from '../UI/Input/Input';
 import Button from '../UI/Button/Button';
@@ -10,9 +11,21 @@ import cardClasses from '../UI/Card/Card.module.scss';
 
 function AddItemForm() {
   const [isExpand, setIsExpand] = useState(false);
+  const [categoryType, setCategoryType] = useState('expense');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const category = useSelector((state) => state.category[categoryType]);
 
   function expandForm() {
     isExpand ? setIsExpand(false) : setIsExpand(true);
+  }
+
+  function categoryTypeHandler(e) {
+    setCategoryType(e.target.value);
+  }
+
+  function categoryHandler(e) {
+    setSelectedCategory(e.target.value);
   }
 
   return (
@@ -31,7 +44,7 @@ function AddItemForm() {
       <form className={`${classes.form} ${isExpand ? 'shown' :'hidden'}`}>
         <div className={`${classes.row} ${classes['category-select']}`}>
           <Input
-            id="categoryTypeExpense"
+            id="addCategoryTypeExpense"
             label="Expenses"
             input={{
               type: "radio",
@@ -40,9 +53,10 @@ function AddItemForm() {
             }}
             value="expense"
             customClasses={classes.radio}
+            onClick={categoryTypeHandler}
           />
           <Input
-            id="categoryTypeIncome"
+            id="addCategoryTypeIncome"
             label="Income"
             input={{
               type: "radio",
@@ -50,12 +64,17 @@ function AddItemForm() {
             }}
             value="income"
             customClasses={classes.radio}
+            onClick={categoryTypeHandler}
           />
         </div>
         <div className={`${classes.row}`}>
           <Select
-            id='category'
+            name='category'
+            id='categorySelect'
             label='Choose category'
+            option={category}
+            onChange={categoryHandler}
+            value={selectedCategory}
           />
         </div>
         <div className={`${classes.row}`}>
