@@ -7,7 +7,8 @@ import AuthContext from './store/auth-context';
 import Modal from './components/UI/Modal/Modal';
 import ModalContext from './store/modal-context';
 import Category from './components/Category/Category';
-import AddItemForm from './components/AddItemForm/AddItemForm'
+import AddItemForm from './components/AddItemForm/AddItemForm';
+import Budget from './components/Budget/Budget';
 
 function App() {
   const ctxAuth = useContext(AuthContext);
@@ -16,6 +17,7 @@ function App() {
   const mainUI = (
     <Fragment>
       <AddItemForm />
+      <Budget />
       <Category />
     </Fragment>
   );
