@@ -9,7 +9,8 @@ import useInput from '../../hooks/use-input';
 import APIContext from '../../store/api-context';
 import AuthContext from '../../store/auth-context';
 import ModalContext from '../../store/modal-context';
-import useHttp from "../../hooks/use-http";
+import useHttp from '../../hooks/use-http';
+import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 
 import classes from './AddItemForm.module.scss';
 import cardClasses from '../UI/Card/Card.module.scss';
@@ -128,17 +129,7 @@ function AddItemForm() {
 
   return (
     <Card className={cardClasses['card--mb']}>
-      <div>
-        <button
-          className={`${classes.btn} ${
-            isExpand ? classes.expanded : classes.collapsed
-          }`}
-          type="button"
-          onClick={expandForm}
-        >
-          Add Expense/Income
-        </button>
-      </div>
+      <ExpandBlock isExpand={isExpand} expandTarget={expandForm} btnText='Add Expense/Income' />
       <form
         onSubmit={submitDataHandler}
         className={`${classes.form} ${isExpand ? 'shown' :'hidden'}`}

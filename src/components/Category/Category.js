@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react';
 import Card from '../UI/Card/Card';
 import CategoryForm from './CategoryForm';
 import CategoryList from './CategoryList';
+import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 
 import classes from './Category.module.scss';
 
@@ -21,17 +22,7 @@ function Category() {
 
   return (
     <Card>
-      <div>
-        <button
-          className={`${classes.btn} ${
-            isExpand ? classes.expanded : classes.collapsed
-          }`}
-          type="button"
-          onClick={expandCategoryBlock}
-        >
-          Categories
-        </button>
-      </div>
+      <ExpandBlock isExpand={isExpand} expandTarget={expandCategoryBlock} btnText='Categories' />
       <div className={`${classes.category} ${isExpand ? 'shown' :'hidden'}`}>
         <CategoryForm
           rerender={setRerender}
