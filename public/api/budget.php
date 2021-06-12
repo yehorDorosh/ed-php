@@ -13,9 +13,9 @@ $tableName = 'budget';
 function createBudgetTable($tableName, $connConfig, &$dbError) {
   if (checkTable($tableName, $connConfig)) return;
   $budgetTableStructure = "
-  id INT(12) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id TEXT,
   email VARCHAR(50) NOT NULL,
-  log_date DATE NOT NULL,
+  log_date DATETIME NOT NULL,
   date DATE NOT NULL,
   category_type VARCHAR(50) NOT NULL,
   category TEXT NOT NULL,
@@ -30,6 +30,7 @@ createBudgetTable($tableName, $connConfig, $dbError);
 if ($_SERVER["REQUEST_METHOD"] == 'POST') {
   $recivedData = json_decode(file_get_contents('php://input'), true);
   if (is_array($recivedData)) {
+    $id = $recivedData['id'];
     $email = $recivedData['email'];
     $log_date = $recivedData['logDate'];
     $date = $recivedData['date'];
@@ -39,8 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $amount = $recivedData['amount'];
     $itemData = [
       [
-        'value' => "$email, $log_date, $date, $category_type, $category, $name, $amount",
-        'col' => 'email, log_date, date, category_type, category, name, amount'
+        'value' => "$id, $email, $log_date, $date, $category_type, $category, $name, $amount",
+        'col' => 'id, email, log_date, date, category_type, category, name, amount'
       ],
     ];
 

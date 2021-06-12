@@ -1,5 +1,6 @@
 import React, { useState, useContext, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { v4 as uuidv4 } from "uuid";
 
 import Input from '../UI/Input/Input';
 import Button from '../UI/Button/Button';
@@ -23,6 +24,15 @@ function currentDate() {
   const day = today.getDate().toString().length < 2 ? `0${today.getDate()}` : today.getDate();
 
   return `${year}-${month}-${day}`
+}
+
+function currentTime() {
+  const today = new Date();
+  const h = today.getHours().toString.length < 2 ? `0${today.getHours()}` : today.getHours;
+  const m = today.getMinutes().toString.length < 2 ? `0${today.getMinutes()}` : today.getMinutes;
+  const s = today.getSeconds().toString.length < 2 ? `0${today.getSeconds()}` : today.getSeconds();
+
+  return `${h}:${m}:${s}`;
 }
 
 function AddItemForm() {
@@ -87,8 +97,9 @@ function AddItemForm() {
         url: `${host}/api/budget.php/`,
         method: 'POST',
         body: {
+          id: `${email}-${category}-${name}-${uuidv4()}`,
           email,
-          logDate: currentDate(),
+          logDate: `${currentDate()} ${currentTime()}`,
           date,
           categoryType,
           category,
