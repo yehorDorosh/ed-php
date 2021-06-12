@@ -218,6 +218,25 @@ function deleteRow($cellContent, $col, $tableName, $connConfig) {
   return $response;
 }
 
+function deleteRowTwoCondition($col1, $condition1, $col2, $condition2, $tableName, $connConfig) {
+  $response = [
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+
+  $sql = "DELETE FROM $tableName WHERE $col1='$condition1' AND $col2='$condition2'";
+  if ($conn->query($sql) === FALSE) {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Error deleting record: " . $conn->error;
+    return $response;
+  }
+  $conn->close();
+  return $response;
+}
+
 function deleteTable($tableName, $connConfig) {
   $response = [
     "error"=>FALSE,

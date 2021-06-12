@@ -73,3 +73,28 @@ if (
     );
     echo json_encode($response);
 }
+
+if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
+  $recivedData = json_decode(file_get_contents('php://input'), true);
+  if (is_array($recivedData)) {
+    $email = $recivedData['email'];
+    $id = $recivedData['id'];
+    if ($email && $id && checkTable($tableName, $connConfig)) {
+      $dbError = array_merge($dbError,
+        deleteRowTwoCondition('email', $email, 'id', $id, $tableName, $connConfig)
+      );
+      if (!$dbError['error']) {
+        $recivedData["code"] = 0;
+      } else {
+        $recivedData["code"] = 1; // DB error
+        $recivedData["errorMsg"] = $dbError['errorMessage'];
+      }
+    } else {
+      $recivedData["code"] = 2; // Invalid income data or budget config table doesn't exist
+      $recivedData["errorMsg"] = "Invalid income data or budget config table doesn't exist";
+    }
+  }
+
+  $recivedData["db"] = $dbError;
+  echo json_encode($recivedData);
+}

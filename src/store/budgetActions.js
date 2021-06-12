@@ -5,13 +5,14 @@ export const fetchBudgetList = (host, email) => {
     async function fetchData() {
       const response = await fetch(`${host}/api/budget.php?email=${email}`);
 
-      if (!response.ok) throw new Error('Could not fetch cart data!');
+      if (!response.ok) throw new Error('Could not fetch data!');
 
       const data = await response.json();
       return data;
     }
 
     try {
+      dispathc(budgetActions.setIsLoading({setIsLoading: true}));
       const recivedData = await fetchData();
       if (recivedData && recivedData.data) {
         dispathc(
@@ -23,5 +24,6 @@ export const fetchBudgetList = (host, email) => {
     } catch(error) {
       console.log(error);
     }
+    dispathc(budgetActions.setIsLoading({setIsLoading: false}));
   }
 }
