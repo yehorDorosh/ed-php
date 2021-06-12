@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import categorySlice from './category-slice';
+import budgetSlice from './budget-slice';
 
-const stroe = configureStore({
-  reducer: {category: categorySlice.reducer,}
+const store = configureStore({
+  reducer: {
+    category: categorySlice.reducer,
+    budget: budgetSlice.reducer
+  }
 });
 
-export default stroe;
+export default store;

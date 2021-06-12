@@ -168,6 +168,37 @@ function readCellFromRow($searchCol, $targetRow, $cellName, $tableName, $connCon
   }
 }
 
+function readRowByColValue($searchCol, $targetRow, $tableName, $connConfig) {
+  $response = [
+    "data"=>NULL,
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+  // Read data
+  $sqlGetData="SELECT * FROM $tableName WHERE $searchCol='$targetRow'";
+  if ($conn->query($sqlGetData) === FALSE) {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Error when read data from db: " . $sqlGetData . "<br>" . $conn->error;
+    return $response;
+  }
+  $result = $conn->query($sqlGetData);
+  $conn->close();
+  $response["data"] = [];
+  if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+      array_push($response["data"], $row);
+    }
+    return $response;
+  } else {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "The varriable doesn't exist in table";
+    return $response;
+  }
+}
+
 function deleteRow($cellContent, $col, $tableName, $connConfig) {
   $response = [
     "error"=>FALSE,

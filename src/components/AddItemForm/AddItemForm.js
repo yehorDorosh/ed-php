@@ -1,5 +1,5 @@
 import React, { useState, useContext, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Input from '../UI/Input/Input';
 import Button from '../UI/Button/Button';
@@ -11,6 +11,7 @@ import AuthContext from '../../store/auth-context';
 import ModalContext from '../../store/modal-context';
 import useHttp from '../../hooks/use-http';
 import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
+import { fetchBudgetList } from '../../store/budgetActions';
 
 import classes from './AddItemForm.module.scss';
 import cardClasses from '../UI/Card/Card.module.scss';
@@ -25,6 +26,7 @@ function currentDate() {
 }
 
 function AddItemForm() {
+  const dispatch = useDispatch();
   const [isExpand, setIsExpand] = useState(false);
   const [categoryType, setCategoryType] = useState('expense');
 
@@ -66,6 +68,7 @@ function AddItemForm() {
   } = useInput((date) => !!date, currentDate());
 
   const { email } = ctxAuth;
+  const { host } = ctxAPI;
 
   const { isLoading, sendRequest: fetchItem} = useHttp();
 
@@ -81,7 +84,7 @@ function AddItemForm() {
   function addItem() {
     fetchItem(
       {
-        url: `${ctxAPI.host}/api/budget.php/`,
+        url: `${host}/api/budget.php/`,
         method: 'POST',
         body: {
           email,
@@ -102,6 +105,8 @@ function AddItemForm() {
               <Button btnText="OK" onClick={ctxModal.onClose} />
             </Fragment>
           );
+        } else {
+          dispatch(fetchBudgetList(host, email));
         }
       }
     );

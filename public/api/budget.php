@@ -61,3 +61,15 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     echo json_encode($recivedData);
   }
 }
+
+if (
+  $_SERVER["REQUEST_METHOD"] == "GET" &&
+  $_GET["email"]
+  ) {
+    $email = $_GET["email"];
+
+    $response = array_merge($dbError,
+      readRowByColValue('email', $email, $tableName, $connConfig)
+    );
+    echo json_encode($response);
+}
