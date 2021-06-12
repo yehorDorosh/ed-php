@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 
 import Input from '../UI/Input/Input';
@@ -6,6 +6,10 @@ import Button from '../UI/Button/Button';
 import Card from '../UI/Card/Card';
 import Select from '../UI/Select/Select';
 import useInput from '../../hooks/use-input';
+import APIContext from '../../store/api-context';
+import AuthContext from '../../store/auth-context';
+import ModalContext from '../../store/modal-context';
+import useHttp from "../../hooks/use-http";
 
 import classes from './AddItemForm.module.scss';
 import cardClasses from '../UI/Card/Card.module.scss';
@@ -22,6 +26,10 @@ function currentDate() {
 function AddItemForm() {
   const [isExpand, setIsExpand] = useState(false);
   const [categoryType, setCategoryType] = useState('expense');
+
+  const ctxAPI = useContext(APIContext);
+  const ctxAuth = useContext(AuthContext);
+  const ctxModal = useContext(ModalContext);
 
   const categories = useSelector((state) => state.category[categoryType]);
 
@@ -56,12 +64,46 @@ function AddItemForm() {
     //reset: clearDate
   } = useInput((date) => !!date, currentDate());
 
+  const { email } = ctxAuth;
+
+  const { isLoading, sendRequest: fetchItem} = useHttp();
+
+
   function expandForm() {
     isExpand ? setIsExpand(false) : setIsExpand(true);
   }
 
   function categoryTypeHandler(e) {
     setCategoryType(e.target.value);
+  }
+
+  function addItem() {
+    fetchItem(
+      {
+        url: `${ctxAPI.host}/api/budget.php/`,
+        method: 'POST',
+        body: {
+          email,
+          logDate: currentDate(),
+          date,
+          categoryType,
+          category,
+          name,
+          amount
+        }
+      },
+      (data) => {
+        if (data.code !== 0) {
+          ctxModal.onShown(
+            <Fragment>
+              <p>Saving error.</p>
+              <p>{data.errorMsg}</p>
+              <Button btnText="OK" onClick={ctxModal.onClose} />
+            </Fragment>
+          );
+        }
+      }
+    );
   }
 
   function submitDataHandler(e) {
@@ -71,9 +113,10 @@ function AddItemForm() {
       categoryIsValid &&
       nameIsValid &&
       amountIsValid &&
-      dateIsValid
+      dateIsValid &&
+      email
     ) {
-      console.log(categoryType, category, name, amount, date);
+      addItem();
       clearName();
       clearAmount();
     } else {
@@ -181,6 +224,11 @@ function AddItemForm() {
         <div className={`${classes["btn-row"]} ${classes.row}`}>
           <Button btnText="Add item" />
         </div>
+        {isLoading && (
+          <div className={classes.load}>
+            <div className={classes.loader}></div>
+          </div>
+        )}
       </form>
     </Card>
   );
