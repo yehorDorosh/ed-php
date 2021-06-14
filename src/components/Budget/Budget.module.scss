@@ -55,3 +55,23 @@ $row-half-interval: 8px;
     }
   }
 }
+
+.statistics {
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 -8px 24px -8px;
+
+  & > div {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  ul {
+    max-height: 150px;
+    overflow: auto;
+  }
+
+  li {
+    margin-bottom: 16px;
+  }
+}

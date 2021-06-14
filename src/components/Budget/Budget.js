@@ -12,6 +12,7 @@ import useHttp from '../../hooks/use-http';
 import Button from '../UI/Button/Button';
 import Select from '../UI/Select/Select';
 import Input from '../UI/Input/Input';
+import CategoryStatistics from './CategoryStatistics';
 
 import classes from './Budget.module.scss';
 import cardClasses from '../UI/Card/Card.module.scss';
@@ -262,10 +263,16 @@ function Budget() {
               />
           </div>
         </form>
-        <div>
-          <p>Total epxenses: {totalIncome}</p>
-          <p>Total income: {totalExpenses}</p>
-          <p>Balance: {balance}</p>
+        <div className={classes.statistics}>
+          <div>
+            <p>Total statistics</p>
+            <ul>
+              <li>Total epxenses: {totalIncome}</li>
+              <li>Total income: {totalExpenses}</li>
+              <li>Balance: {balance}</li>
+            </ul>
+          </div>
+          <CategoryStatistics categoryList={categoryList} itemList={filteredItemList} />
         </div>
         <BudgetTable
           itemList={filteredItemList}
