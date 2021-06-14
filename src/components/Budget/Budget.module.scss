@@ -6,6 +6,7 @@ $row-half-interval: 8px;
   position: relative;
   border: solid 1px $main-font-color;
   padding: 8px;
+  overflow: auto;
 }
 
 .form {
@@ -16,7 +17,8 @@ $row-half-interval: 8px;
   padding: 8px;
 
   .btn-row {
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
   }
 
   .row {

@@ -5,12 +5,13 @@
   color: $main-font-color;
   line-height: 1;
   border: none;
-  padding: 8px 16px;
+  padding: 4px 8px;
   border-radius: 4px;
   font-weight: 700;
   font-size: 1rem;
 
   @include t {
+    padding: 8px 16px;
     font-size: 1.2rem;
   }
   

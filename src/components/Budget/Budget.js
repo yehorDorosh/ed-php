@@ -47,6 +47,14 @@ function getYearMonth(date) {
   return arr.join('-');
 }
 
+function moveToMonth(prev, step) {
+  const prevDate = new Date(prev);
+  const newDate = new Date(prevDate.setMonth(prevDate.getMonth() + step));
+  const dateArr = newDate.toISOString().split('T')[0].split('-');
+  dateArr.pop();
+  return dateArr.join('-');
+}
+
 function Budget() {
   const dispatch = useDispatch();
   const ctxAPI = useContext(APIContext);
@@ -151,6 +159,14 @@ function Budget() {
     );
   }, [categoryType,  category, month, incomeItemList]);
 
+  function monthBack() {
+    setMonth((prev) => moveToMonth(prev, -1));
+  }
+
+  function monthForward() {
+    setMonth((prev) => moveToMonth(prev, 1));
+  }
+
   return (
     <Card className={cardClasses['card--mb']}>
       <ExpandBlock
@@ -190,6 +206,22 @@ function Budget() {
             onChange={monthHandler}
             onBlur={monthHandler}
           />
+          <div className={`${classes['btn-row']} ${classes.row}`}>
+            <Button
+              btn={{
+                type: 'button',
+              }}
+              btnText='One month back' 
+              onClick={monthBack}
+            />
+            <Button
+              btn={{
+                type: 'button',
+              }}
+              btnText='One month forward' 
+              onClick={monthForward}
+            />
+          </div>
         </form>
         <BudgetTable
           itemList={filteredItemList}
