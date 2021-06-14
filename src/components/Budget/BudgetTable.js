@@ -16,11 +16,11 @@ function BudgetTable(props) {
         <table className={classes.table}>
           <thead>
             <tr>
-              <th>Type</th>
-              <th>Category</th>
               <th>Name</th>
               <th>Amount</th>
+              <th>Category</th>
               <th>Date</th>
+              <th>Type</th>
               <th></th>
             </tr>
           </thead>
@@ -28,11 +28,11 @@ function BudgetTable(props) {
             {props.itemList.map((row) => {
               return (
                 <tr key={row.id}>
-                  <td>{row.category_type}</td>
-                  <td>{row.category}</td>
                   <td>{row.name}</td>
                   <td>{row.amount}</td>
+                  <td>{row.category}</td>
                   <td>{row.date}</td>
+                  <td>{row.category_type}</td>
                   <td>
                     <Button
                       btnText='Delete'

@@ -48,7 +48,7 @@ function getYearMonth(date) {
 }
 
 function moveToMonth(prev, step) {
-  const prevDate = new Date(prev);
+  const prevDate = new Date(`${prev}-01T12:00:00`);
   const newDate = new Date(prevDate.setMonth(prevDate.getMonth() + step));
   const dateArr = newDate.toISOString().split('T')[0].split('-');
   dateArr.pop();
@@ -96,8 +96,12 @@ function Budget() {
   }, [categoryTypeHandler, expenseCategory, incomeCategory]);
 
   const incomeItemList = useSelector((state) => state.budget.itemList);
-  //const itemList = (incomeItemList && incomeItemList.length) ? incomeItemList.slice().reverse()  : [];
   const [filteredItemList, setFilteredItemList] = useState([]);
+  const [showAll, setShowAll] = useState(false);
+
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [balance, setBalance] = useState(0);
 
   const itemsLoading = useSelector((state) => state.budget.isLoading);
   const { isLoading: isDeleting, sendRequest: fetchItem } = useHttp();
@@ -148,16 +152,38 @@ function Budget() {
   }
 
   useEffect(() => {
-    setFilteredItemList(
-      incomeItemList.filter((item) => {
-        const categoryTypeFilter = categoryType === 'all' || categoryType === item.category_type;
-        const categoryFilter = category === 'all' || category === item.category;
-        const dateFilter = month === getYearMonth(item.date);
-        
-        return categoryTypeFilter && categoryFilter && dateFilter;
-      }).reverse()
+    const shownItems = incomeItemList.filter((item) => {
+      const categoryTypeFilter = categoryType === 'all' || categoryType === item.category_type;
+      const categoryFilter = category === 'all' || category === item.category;
+      const dateFilter = month === getYearMonth(item.date);
+      
+      return showAll || (categoryTypeFilter && categoryFilter && dateFilter);
+    }).reverse();
+
+    setTotalExpenses(
+      shownItems.reduce((accumulator, current) => {
+        if(current.category_type === 'expense') {
+          return accumulator + +current.amount;
+        } else {
+          return accumulator;
+        }
+      }, 0)
     );
-  }, [categoryType,  category, month, incomeItemList]);
+
+    setTotalIncome(
+      shownItems.reduce((accumulator, current) => {
+        if(current.category_type === 'income') {
+          return accumulator + +current.amount;
+        } else {
+          return accumulator;
+        }
+      }, 0)
+    );
+
+    setBalance(totalIncome - totalExpenses);
+
+    setFilteredItemList(shownItems);
+  }, [categoryType,  category, month, incomeItemList, showAll, totalExpenses, totalIncome]);
 
   function monthBack() {
     setMonth((prev) => moveToMonth(prev, -1));
@@ -165,6 +191,10 @@ function Budget() {
 
   function monthForward() {
     setMonth((prev) => moveToMonth(prev, 1));
+  }
+
+  function showAllHandler() {
+    setShowAll((prev) => !prev);
   }
 
   return (
@@ -222,7 +252,21 @@ function Budget() {
               onClick={monthForward}
             />
           </div>
+          <div className={`${classes.row}`}>
+            <Button
+                btn={{
+                  type: 'button',
+                }}
+                btnText={showAll ? 'Enable filter' : 'Show all'} 
+                onClick={showAllHandler}
+              />
+          </div>
         </form>
+        <div>
+          <p>Total epxenses: {totalIncome}</p>
+          <p>Total income: {totalExpenses}</p>
+          <p>Balance: {balance}</p>
+        </div>
         <BudgetTable
           itemList={filteredItemList}
           removeItem={removeItem}
