@@ -5,7 +5,6 @@ import Button from '../UI/Button/Button';
 import classes from './BudgetTable.module.scss';
 import classesButton from '../UI/Button/Button.module.scss';
 
-
 function BudgetTable(props) {
   function removeItem(id) {
     props.removeItem(id);
@@ -13,7 +12,7 @@ function BudgetTable(props) {
 
   return (
     <Fragment>
-      {props.itemList && (
+      {props.itemList.length > 0 && (
         <table className={classes.table}>
           <thead>
             <tr>
@@ -36,7 +35,7 @@ function BudgetTable(props) {
                   <td>{row.date}</td>
                   <td>
                     <Button
-                      btnText="Delete"
+                      btnText='Delete'
                       onClick={removeItem.bind(null, row.id)}
                       className={classesButton['btn--red']}
                     />
@@ -46,6 +45,11 @@ function BudgetTable(props) {
             })}
           </tbody>
         </table>
+      )}
+      {!props.itemList.lenght && (
+        <p className={classes['text-center']}>
+          No results. Try another filter setup.
+        </p>
       )}
       {props.isLoading && (
         <div className={classes.load}>
