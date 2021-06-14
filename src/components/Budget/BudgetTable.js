@@ -46,7 +46,7 @@ function BudgetTable(props) {
           </tbody>
         </table>
       )}
-      {!props.itemList.lenght && (
+      {!props.itemList.length && (
         <p className={classes['text-center']}>
           No results. Try another filter setup.
         </p>
