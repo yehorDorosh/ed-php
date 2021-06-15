@@ -267,8 +267,8 @@ function Budget() {
           <div>
             <p>Total statistics</p>
             <ul>
-              <li>Total epxenses: {totalIncome}</li>
-              <li>Total income: {totalExpenses}</li>
+              <li>Total epxenses: {totalExpenses}</li>
+              <li>Total income: {totalIncome}</li>
               <li>Balance: {balance}</li>
             </ul>
           </div>
