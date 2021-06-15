@@ -10,7 +10,7 @@ $dbError = [
 ];
 
 function removeUser($email, $regTable, $connConfig, &$dbError) {
-  $userName = strstr($email, "@", true);
+  $userName = str_replace('.', '', strstr($email, "@", true));
   $dbError = array_merge($dbError, deleteRow($email, "email", $regTable, $connConfig));
   $dbError = array_merge($dbError, deleteTable($userName, $connConfig));
 }
@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
   if (is_array($recivedData)) {
     $email = $recivedData["email"];
     removeUser($email, $regTable, $connConfig, $dbError);
+    deleteRow($email, 'email', 'budget', $connConfig);
     if ($dbError['error']) {
       $recivedData["code"] = 1; // DB error
     } else {

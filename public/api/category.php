@@ -51,7 +51,7 @@ if (
   $_GET["email"] &&
   $_GET["categoryType"]
   ) {
-    $userName = strstr($_GET["email"], "@", true);
+    $userName = str_replace('.', '', strstr($_GET["email"], "@", true));
     $userConfigTable = $userName;
 
     if ($_GET["categoryType"] === 'expense') {
@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
   $recivedData = json_decode(file_get_contents('php://input'), true);
   if (is_array($recivedData)) {
     $email = $recivedData["email"];
-    $userName = strstr($email, "@", true);
+    $userName = str_replace('.', '', strstr($email, "@", true));
     if ($recivedData["categoryName"] && checkTable($userName, $connConfig)) {
       if ($recivedData["categoryType"] === 'expense') {
         $newCategoryList = addCategory($recivedData["categoryName"], 'Expense categories', $userName, $connConfig, $dbError); 
@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
   $recivedData = json_decode(file_get_contents('php://input'), true);
   if (is_array($recivedData)) {
     $email = $recivedData["email"];
-    $userName = strstr($email, "@", true);
+    $userName = str_replace('.', '', strstr($email, "@", true));
     if ($recivedData["categoryName"] && checkTable($userName, $connConfig) && $recivedData["categoryName"] !== 'all') {
       $newCategoryList = removeCategory($recivedData["categoryName"], $categoryMap[$recivedData["categoryType"]], $userName, $connConfig, $dbError);
       $dbError = saveValueToDbCell($categoryMap[$recivedData["categoryType"]], 'parameter', $newCategoryList, 'value', $userName, $connConfig);

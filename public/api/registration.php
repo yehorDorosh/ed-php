@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$dbError["error"]) {
   $recivedData = json_decode(file_get_contents('php://input'), true);
   if (is_array($recivedData)) {
     $email = $recivedData["email"];
-    $userName = strstr($email, "@", true);
+    $userName = str_replace('.', '', strstr($email, "@", true));
     $password = $recivedData["password"];
     if (valueIsExistInCol($regTable, $userName, "user_name", $connConfig)) {
       $recivedData["error"] = true;
