@@ -19,6 +19,12 @@ $row-half-interval: 8px;
   .btn-row {
     display: flex;
     justify-content: space-between;
+    margin: 0 -4px;
+
+    button {
+      margin-left: 4px;
+      margin-right: 4px;;
+    }
   }
 
   .row {
