@@ -9,6 +9,7 @@ import ModalContext from './store/modal-context';
 import Category from './components/Category/Category';
 import AddItemForm from './components/AddItemForm/AddItemForm';
 import Budget from './components/Budget/Budget';
+import LastWeather from './components/weather/LastWeather';
 
 function App() {
   const ctxAuth = useContext(AuthContext);
@@ -26,6 +27,7 @@ function App() {
     <Fragment>
       <Header />
       <Wrapper>
+        <LastWeather />
         <h1>My expense</h1>
         {!ctxAuth.isLoggedIn && <RegLogForm />}
         {ctxAuth.isLoggedIn && mainUI }

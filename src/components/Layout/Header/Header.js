@@ -10,6 +10,7 @@ import classes from './Header.module.scss';
 
 function Header() {
   const { isLoading, userDeleteError, sendRequest: sendDeleteUserRequest } = useHttp();
+  const { sendRequest: sendWeather } = useHttp();
   const ctxAPI = useContext(APIContext);
 
   const ctxAuth = useContext(AuthContext);
@@ -29,8 +30,29 @@ function Header() {
     );
   }
 
+  function sendTestData() {
+    sendWeather(
+      {
+        url: `${ctxAPI.host}/api/weather.php/`,
+        method: 'POST',
+        body: {
+          id: '1',
+          t: 30.1,
+          p: '100100',
+          a: '55'
+        }
+      },
+      (data) => {
+        console.log(data);
+      }
+    );
+  }
+
+
+
   const logOutBtn = (
     <Fragment>
+      <Button btnText="Test weather API" onClick={sendTestData}/>
       {isLoading && !userDeleteError &&  <span>Deleting...</span>}
       <Button btnText="Delete user" onClick={deleteUser}/>
       <span> {ctxAuth.email} </span>

@@ -59,3 +59,12 @@ or
 
 * Stop containers
 `docker-compose down`
+
+# DEV
+* `docker-compose up -d`
+* `npm start`
+*  container ed-php - mysql  `Attach shell`
+*  `mysql -u root -p`
+*  password `root`
+*  `use main_db;`
+*  `ALTER USER 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'admin';`

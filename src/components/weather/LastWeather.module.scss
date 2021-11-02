@@ -1,0 +1,39 @@
+@import '../../styles/components/loader.scss';
+
+$row-half-interval: 8px;
+
+.last-weather {
+  position: relative;
+}
+
+table {
+  width: 100%;
+
+  td {
+    text-align: center;
+  }
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: $row-half-interval;
+  margin-bottom: $row-half-interval;
+  min-height: 35px;
+
+  &:last-child {
+    margin-top: $row-half-interval;
+    margin-bottom: 0;
+  }
+
+  & > span {
+    text-transform: capitalize;
+    line-height: 35px;
+  }
+
+  &--first {
+    order: -1;
+    margin-top: 0;
+    margin-bottom: $row-half-interval;
+  }
+}
