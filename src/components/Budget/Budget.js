@@ -23,9 +23,9 @@ function currentDate() {
   const month = `${today.getMonth() + 1}`.length < 2 ? `0${today.getMonth() + 1}` : today.getMonth() + 1;
   const day = today.getDate().toString().length < 2 ? `0${today.getDate()}` : today.getDate();
 
-  const h = today.getHours().toString.length < 2 ? `0${today.getHours()}` : today.getHours;
-  const m = today.getMinutes().toString.length < 2 ? `0${today.getMinutes()}` : today.getMinutes;
-  const s = today.getSeconds().toString.length < 2 ? `0${today.getSeconds()}` : today.getSeconds();
+  const h = today.getHours().toString().length < 2 ? `0${today.getHours()}` : today.getHours();
+  const m = today.getMinutes().toString().length < 2 ? `0${today.getMinutes()}` : today.getMinutes();
+  const s = today.getSeconds().toString().length < 2 ? `0${today.getSeconds()}` : today.getSeconds();
 
   return {
     year: +year,

@@ -8,6 +8,30 @@ import Card from '../UI/Card/Card';
 import classes from "./LastWeather.module.scss";
 import cardClasses from '../UI/Card/Card.module.scss';
 
+function localDateFormat(strDate) {
+  const date = new Date(`${strDate} UTC`);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.length < 2 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  const day = date.getDate().toString().length < 2 ? `0${date.getDate()}` : date.getDate();
+
+  const h = date.getHours().toString().length < 2 ? `0${date.getHours()}` : date.getHours();
+  const m = date.getMinutes().toString().length < 2 ? `0${date.getMinutes()}` : date.getMinutes();
+  const s = date.getSeconds().toString().length < 2 ? `0${date.getSeconds()}` : date.getSeconds();
+
+  return {
+    year: +year,
+    month: +month,
+    day: +day,
+    h: +h,
+    m: +m,
+    s: +s,
+    dataTime: `${year}-${month}-${day} ${h}:${m}:${s}`,
+    data: `${year}-${month}-${day}`,
+    time: `${h}:${m}:${s}`,
+    yearMonth: `${year}-${month}`,
+  }
+}
+
 const LastWeather = () => {
   const ctxAPI = useContext(APIContext);
   //const ctxModal = useContext(ModalContext);
@@ -47,7 +71,7 @@ const LastWeather = () => {
               <td>{lastWeather.t}</td>
               <td>{lastWeather.p}</td>
               <td>{lastWeather.a}</td>
-              <td>{lastWeather.reg_date}</td>
+              <td>{localDateFormat(lastWeather.reg_date).dataTime}</td>
             </tr>
             </tbody>
         </table>
