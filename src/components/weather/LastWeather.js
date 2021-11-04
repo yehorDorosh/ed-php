@@ -43,14 +43,26 @@ const LastWeather = () => {
   const [lastWeather, setLastWeather] = useState();
 
   useEffect(() => {
-    getWeather(
-      {
-        url: `${host}/api/weather.php?id=1`,
-      },
-      (response) => {
-        setLastWeather(response.data[0]);
-      }
-    );
+    function makeWeatherRequest() {
+      getWeather(
+        {
+          url: `${host}/api/weather.php?id=1`,
+        },
+        (response) => {
+          setLastWeather(response.data[0]);
+        }
+      );
+    }
+
+    makeWeatherRequest();
+
+    const timerID = setInterval(() => {
+      makeWeatherRequest();
+    }, 450000);
+
+    return () => {
+      clearTimeout(timerID);
+    };
   }, [host, getWeather]);
 
   return (
