@@ -73,16 +73,16 @@ const LastWeather = () => {
           <tbody>
             <tr>
               <th>ID</th>
-              <th>Temperature</th>
-              <th>Pressure</th>
-              <th>Attitude</th>
+              <th>Temperature, °C</th>
+              <th>Pressure, Pa</th>
+              <th>Altitude, m</th>
               <th>Date Time</th>
             </tr>
             <tr>
               <td>{lastWeather.id}</td>
-              <td>{lastWeather.t}</td>
-              <td>{lastWeather.p}</td>
-              <td>{lastWeather.a}</td>
+              <td>{lastWeather.t} °C</td>
+              <td>{lastWeather.p} Pa</td>
+              <td>{lastWeather.a} m</td>
               <td>{localDateFormat(lastWeather.reg_date).dataTime}</td>
             </tr>
             </tbody>
