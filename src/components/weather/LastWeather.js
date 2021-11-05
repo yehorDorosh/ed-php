@@ -25,8 +25,8 @@ function localDateFormat(strDate) {
     h: +h,
     m: +m,
     s: +s,
-    dataTime: `${year}-${month}-${day} ${h}:${m}:${s}`,
-    data: `${year}-${month}-${day}`,
+    dateTime: `${year}-${month}-${day} ${h}:${m}:${s}`,
+    date: `${year}-${month}-${day}`,
     time: `${h}:${m}:${s}`,
     yearMonth: `${year}-${month}`,
   }
@@ -83,7 +83,7 @@ const LastWeather = () => {
               <td>{lastWeather.t} °C</td>
               <td>{lastWeather.p} Pa</td>
               <td>{lastWeather.a} m</td>
-              <td>{localDateFormat(lastWeather.reg_date).dataTime}</td>
+              <td>{localDateFormat(lastWeather.reg_date).dateTime}</td>
             </tr>
             </tbody>
         </table>

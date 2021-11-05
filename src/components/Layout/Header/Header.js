@@ -52,7 +52,7 @@ function Header() {
 
   const logOutBtn = (
     <Fragment>
-      <Button btnText="Test weather API" onClick={sendTestData}/>
+      { ctxAuth.email === 'yehor.dorosh@ukr.net' && <Button btnText="Test weather API" onClick={sendTestData}/>}
       {isLoading && !userDeleteError &&  <span>Deleting...</span>}
       <Button btnText="Delete user" onClick={deleteUser}/>
       <span> {ctxAuth.email} </span>

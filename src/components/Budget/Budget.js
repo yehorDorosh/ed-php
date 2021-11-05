@@ -34,8 +34,8 @@ function currentDate() {
     h: +h,
     m: +m,
     s: +s,
-    dataTime: `${year}-${month}-${day} ${h}:${m}:${s}`,
-    data: `${year}-${month}-${day}`,
+    dateTime: `${year}-${month}-${day} ${h}:${m}:${s}`,
+    date: `${year}-${month}-${day}`,
     time: `${h}:${m}:${s}`,
     yearMonth: `${year}-${month}`,
   }

@@ -58,10 +58,17 @@ if (
   $_GET["id"]
   ) {
     $id = $_GET["id"];
+    $date = $_GET["date"];
 
-    $response = array_merge($dbError,
-      // readRowByColValue('id', $id, $tableName, $connConfig) all data
-      readLastRowByColValue('id', $id, 'reg_date', $tableName, $connConfig)
-    );
+    if (!$_GET["date"]) {
+      $response = array_merge($dbError,
+        // readRowByColValue('id', $id, $tableName, $connConfig) all data
+        readLastRowByColValue('id', $id, 'reg_date', $tableName, $connConfig)
+      );
+    } else if ($_GET["date"]) {
+      $response = array_merge($dbError,
+        readByColAndDateValue('id', $id, 'reg_date', "$date 00:00:00", "$date 23:59:59", $tableName, $connConfig)
+      );
+    }
     echo json_encode($response);
 }

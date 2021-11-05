@@ -199,6 +199,37 @@ function readRowByColValue($searchCol, $targetRow, $tableName, $connConfig) {
   }
 }
 
+function readByColAndDateValue($searchCol, $targetRow, $dateCol, $dateFrom, $dateTo, $tableName, $connConfig) {
+  $response = [
+    "data"=>NULL,
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+  // Read data
+  $sqlGetData="SELECT * FROM $tableName WHERE $searchCol='$targetRow' AND $dateCol BETWEEN '$dateFrom' and '$dateTo'";
+  if ($conn->query($sqlGetData) === FALSE) {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Error when read data from db: " . $sqlGetData . "<br>" . $conn->error;
+    return $response;
+  }
+  $result = $conn->query($sqlGetData);
+  $conn->close();
+  $response["data"] = [];
+  if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+      array_push($response["data"], $row);
+    }
+    return $response;
+  } else {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Empty set";
+    return $response;
+  }
+}
+
 function readLastRowByColValue($searchCol, $targetRow, $dateCol, $tableName, $connConfig) {
   $response = [
     "data"=>NULL,
