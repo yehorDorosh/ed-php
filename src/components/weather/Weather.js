@@ -85,7 +85,6 @@ const LastWeather = () => {
         url: `${host}/api/weather.php?id=1&date=${date}`,
       },
       (response) => {
-        console.log(response.data);
         setWeather(response.data);
       }
     );
