@@ -60,7 +60,7 @@ function currentDate() {
   }
 }
 
-const LastWeather = () => {
+const Weather = (props) => {
   const ctxAPI = useContext(APIContext);
   const [isExpand, setIsExpand] = useState(false);
   //const ctxModal = useContext(ModalContext);
@@ -154,4 +154,4 @@ const LastWeather = () => {
   );
 }
 
-export default LastWeather;
+export default Weather;

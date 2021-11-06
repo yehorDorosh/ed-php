@@ -3,9 +3,136 @@
 @import '../../styles/vars.scss';
 
 $row-half-interval: 8px;
+$min-bar-width: 650px;
 
 .last-weather {
   position: relative;
+}
+
+.pressure-diff-container {
+  overflow: auto;
+  min-height: 100px;
+
+  @include t {
+    overflow: hidden;
+  }
+}
+
+.pressure-diff {
+  text-align: center;
+
+  span {
+    color: $primary;
+  }
+}
+
+.bar-legend {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  min-width: $min-bar-width;
+  font-size: 10px;
+
+  li {
+    display: block;
+    position: relative;
+    width: 85px;
+
+    &::after {
+      content: '|';
+      position: absolute;
+      top: 100%;
+    }
+
+    &:nth-child(1) {
+      &::after {
+        left: 0;
+      }
+    }
+
+    &:nth-child(2) {
+      &::after {
+        left: 8%;
+      }
+    }
+
+    &:nth-child(3) {
+      &::after {
+        left: 18%;
+      }
+    }
+
+    &:nth-child(4) {
+      &::after {
+        left: 28%;
+      }
+    }
+
+    &:nth-child(5) {
+      &::after {
+        left: 38%;
+      }
+    }
+
+    &:nth-child(6) {
+      &::after {
+        left: 50%;
+      }
+    }
+
+    &:nth-child(7) {
+      &::after {
+        left: 59%;
+      }
+    }
+
+    &:nth-child(8) {
+      &::after {
+        left: 69%;
+      }
+    }
+
+    &:nth-child(9) {
+      &::after {
+        left: 79%;
+      }
+    }
+
+    &:nth-child(10) {
+      &::after {
+        left: 89%;
+      }
+    }
+
+    &:nth-child(11) {
+      &::after {
+        left: 98%;
+      }
+    }
+  }
+}
+
+.bar {
+  height: 12px;
+  position: relative;
+  min-width: $min-bar-width;
+
+  &__left,
+  &__right, {
+    position: absolute;
+    height: 100%;
+    background-color: $primary;
+  }
+
+  &__left {
+    right: 50%;
+    left: 50%;
+  }
+
+  &__right {
+    left: 50%;
+    right: 50%;
+  }
 }
 
 table {
