@@ -115,28 +115,33 @@ const LastWeather = () => {
           </div>
         </form>
       {weather && (
-        <table>
-          <tbody>
-            <tr>
-              <th>ID</th>
-              <th>Temperature, °C</th>
-              <th>Pressure, Pa</th>
-              <th>Altitude, m</th>
-              <th>Date Time</th>
-            </tr>
-            {weather.map((row) => {
-              return (
-                <tr key={`${row.id}-${uuidv4()}`}>
-                  <td>{row.id}</td>
-                  <td>{row.t} °C</td>
-                  <td>{row.p} Pa</td>
-                  <td>{row.a} m</td>
-                  <td>{localDateFormat(row.reg_date).dateTime}</td>
-                </tr>
-              );
-            })}
-            </tbody>
-        </table>
+        <div className={`${classes["table-scroll"]}`}>
+          <table>
+            <tbody>
+              <tr>
+                <th>ID</th>
+                <th>Date Time</th>
+                <th>Temperature, °C</th>
+                <th>Pressure, Pa</th>
+                <th>Altitude, m</th>
+                <th>Power supply, V</th>
+              </tr>
+              {weather.map((row) => {
+                return (
+                  <tr key={`${row.id}-${uuidv4()}`}>
+                    <td>{row.id}</td>
+                    <td>{localDateFormat(row.reg_date).dateTime}</td>
+                    <td>{row.t} °C</td>
+                    <td>{row.p} Pa</td>
+                    <td>{row.a} m</td>
+                    <td>{row.v} V</td>
+                  </tr>
+                );
+              })}
+              </tbody>
+          </table>
+        </div>
+        
       )}
       { !weather.length && <p>No weather data</p>}
       {isLoading && (

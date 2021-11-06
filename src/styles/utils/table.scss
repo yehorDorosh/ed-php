@@ -1,0 +1,12 @@
+.table-scroll {
+  overflow: auto;
+
+  table {
+    tr td:first-child,
+    tr th:first-child {
+      position: sticky;
+      z-index: 5;
+      left: -1px;
+    }
+  }
+}

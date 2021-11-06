@@ -68,3 +68,6 @@ or
 *  password `root`
 *  `use main_db;`
 *  `ALTER USER 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'admin';`
+
+# MySQL
+* Get last row from Weather table, id=1 `select * from weather where reg_date in (select max(reg_date) from weather where id='1');`

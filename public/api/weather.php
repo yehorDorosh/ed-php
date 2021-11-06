@@ -15,7 +15,8 @@ reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 id TEXT NOT NULL,
 t FLOAT(3, 1),
 p INT(6),
-a INT(4)
+a INT(4),
+v FLOAT(4, 2)
 ";
 
 $dbError = array_merge($dbError, createTable($tableName, $weatherTableStructure, $connConfig));
@@ -27,11 +28,12 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $t = $recivedData['t'];
     $p = $recivedData['p'];
     $a = $recivedData['a'];
+    $v = $recivedData['v'];
 
     $itemData = [
       [
-        'value' => "$id, $t, $p, $a",
-        'col' => 'id, t, p, a'
+        'value' => "$id, $t, $p, $a, $v",
+        'col' => 'id, t, p, a, v'
       ],
     ];
 

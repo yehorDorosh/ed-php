@@ -67,23 +67,25 @@ const LastWeather = () => {
 
   return (
     <Card className={cardClasses['card--mb']}>
-      <div className={`${classes["last-weather"]} ${classes.row}`}>
+      <div className={`${classes["table-scroll"]} ${classes["last-weather"]} ${classes.row}`}>
       {lastWeather && (
         <table>
           <tbody>
             <tr>
               <th>ID</th>
+              <th>Date Time</th>
               <th>Temperature, °C</th>
               <th>Pressure, Pa</th>
               <th>Altitude, m</th>
-              <th>Date Time</th>
+              <th>Power supply, V</th>
             </tr>
             <tr>
               <td>{lastWeather.id}</td>
+              <td>{localDateFormat(lastWeather.reg_date).dateTime}</td>
               <td>{lastWeather.t} °C</td>
               <td>{lastWeather.p} Pa</td>
               <td>{lastWeather.a} m</td>
-              <td>{localDateFormat(lastWeather.reg_date).dateTime}</td>
+              <td>{lastWeather.v} V</td>
             </tr>
             </tbody>
         </table>

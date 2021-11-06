@@ -30,6 +30,7 @@ function useHttp() {
         <Fragment>
           <p>Some network problems was occur:</p>
           <p>{error.message}</p>
+          <p>{requestConfig.url}</p>
           <Button btnText="OK" onClick={closeErrorPopup} />
         </Fragment>
       );
