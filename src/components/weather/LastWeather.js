@@ -19,17 +19,18 @@ const LastWeather = (props) => {
   const ctxAPI = useContext(APIContext);
   const { isLoading, sendRequest: getWeather } = useHttp();
   const {aprox: pressureAprox} = useAprox();
-  const {localDateFormat, dateFormat, currentDate} = useDate();
+  const {localDateFormat, dateFormat, currentDate, serverCurrentTime} = useDate();
   const { host } = ctxAPI;
 
   const [lastWeather, setLastWeather] = useState();
   const [pressureDiff, setPressureDiff] = useState();
 
   useEffect(() => {
-    function getDateBeforeOnHours(h) {
+    function getDateBeforeHours(h) {
       const today = new Date();
       today.setHours(today.getHours() - h);
-      return dateFormat(today);
+      const serverDate = today.toLocaleString('en-US', {timeZone: 'Europe/London'});
+      return dateFormat(new Date(serverDate));
     }
 
     function getPressureDrop(data) {
@@ -40,6 +41,8 @@ const LastWeather = (props) => {
       const y0 = coefficients.a * 1 + coefficients.b;
       const y1 = coefficients.a * pressureLog.length + coefficients.b;
       const pressureDiff = y1 - y0;
+
+      //console.log('Pressure', pressureLog);
   
       return Math.round(pressureDiff);
     }
@@ -56,7 +59,7 @@ const LastWeather = (props) => {
 
       getWeather(
         {
-          url: `${host}/api/weather.php?id=1&dateFrom=${getDateBeforeOnHours(2).dateTime}&dateTo=${currentDate().dateTime}`,
+          url: `${host}/api/weather.php?id=1&dateFrom=${getDateBeforeHours(2).dateTime}&dateTo=${serverCurrentTime().dateTime}`,
         },
         (response) => {
           setPressureDiff(getPressureDrop(response.data));
@@ -73,7 +76,7 @@ const LastWeather = (props) => {
     return () => {
       clearTimeout(timerID);
     };
-  }, [host, getWeather, pressureAprox, currentDate, dateFormat]);
+  }, [host, getWeather, pressureAprox, currentDate, dateFormat, serverCurrentTime]);
 
   function renderLeftBar(pressure) {
     return range(-250, 0, 0, 50, pressure);

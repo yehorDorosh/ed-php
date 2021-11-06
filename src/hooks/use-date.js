@@ -71,11 +71,16 @@ const useDate = () => {
       yearMonth: `${year}-${month}`,
     }
   }, []);
+
+  const serverCurrentTime = useCallback(() => {
+    return dateFormat(new Date(new Date().toLocaleString('en-US', {timeZone: 'Europe/London'})));
+  }, [dateFormat]);
   
   return {
     localDateFormat,
     dateFormat,
-    currentDate
+    currentDate,
+    serverCurrentTime
   }
 }
 
