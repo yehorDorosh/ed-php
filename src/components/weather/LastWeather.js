@@ -24,6 +24,7 @@ const LastWeather = (props) => {
 
   const [lastWeather, setLastWeather] = useState();
   const [pressureDiff, setPressureDiff] = useState();
+  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(3);
 
   useEffect(() => {
     function getDateBeforeHours(h) {
@@ -33,7 +34,7 @@ const LastWeather = (props) => {
       return dateFormat(new Date(serverDate));
     }
 
-    function getPressureDrop(data) {
+    function getPressureChanging(data) {
       if (!data.length) return null;
       const pressureLog = data.map(row => row.p);
       const coefficients = pressureAprox(pressureLog);
@@ -59,10 +60,10 @@ const LastWeather = (props) => {
 
       getWeather(
         {
-          url: `${host}/api/weather.php?id=1&dateFrom=${getDateBeforeHours(2).dateTime}&dateTo=${serverCurrentTime().dateTime}`,
+          url: `${host}/api/weather.php?id=1&dateFrom=${getDateBeforeHours(pressureChangingPeriod).dateTime}&dateTo=${serverCurrentTime().dateTime}`,
         },
         (response) => {
-          setPressureDiff(getPressureDrop(response.data));
+          setPressureDiff(getPressureChanging(response.data));
         }
       );
     }
@@ -76,7 +77,7 @@ const LastWeather = (props) => {
     return () => {
       clearTimeout(timerID);
     };
-  }, [host, getWeather, pressureAprox, currentDate, dateFormat, serverCurrentTime]);
+  }, [host, getWeather, pressureAprox, currentDate, dateFormat, serverCurrentTime, pressureChangingPeriod]);
 
   function renderLeftBar(pressure) {
     return range(-250, 0, 0, 50, pressure);
@@ -86,10 +87,21 @@ const LastWeather = (props) => {
     return range(0, 250, 50, 0, pressure);
   }
 
+  function pressurePeriodHandler(e) {
+    setPressureChangingPeriod(e.target.value);
+  }
+
   return (
     <Card className={cardClasses['card--mb']}>
       <div className={classes['pressure-diff-container']}>
-        <p className={classes['pressure-diff']}>Pressure changed on <span>{pressureDiff}Pa</span> per 2 hours.</p>
+        <p className={classes['pressure-diff']}>Pressure changed on <span>{pressureDiff}Pa</span> per 
+        <input
+          type="number"
+          defaultValue={pressureChangingPeriod}
+          onBlur={pressurePeriodHandler}
+          onChange={pressurePeriodHandler}
+        />
+         hours.</p>
         <ul className={classes['bar-legend']}>
           <li>-250Pa (Storm)</li>
           <li>-200Pa</li>

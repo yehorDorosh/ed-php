@@ -17,6 +17,16 @@ $min-bar-width: 650px;
   @include t {
     overflow: hidden;
   }
+
+  input {
+    border: none;
+    background: transparent;
+    color: $main-font-color;
+    width: 35px;
+    outline: none;
+    text-align: center;
+    padding-left: 16px;
+  }
 }
 
 .pressure-diff {
