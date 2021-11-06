@@ -7,63 +7,15 @@ import Card from '../UI/Card/Card';
 import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 import Button from '../UI/Button/Button';
 import Input from '../UI/Input/Input';
-//import ModalContext from "../../store/modal-context";
+import useDate from '../../hooks/use-date';
 
 import classes from "./Weather.module.scss";
 import cardClasses from '../UI/Card/Card.module.scss';
 
-function localDateFormat(strDate) {
-  const date = new Date(`${strDate} UTC`);
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.length < 2 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
-  const day = date.getDate().toString().length < 2 ? `0${date.getDate()}` : date.getDate();
-
-  const h = date.getHours().toString().length < 2 ? `0${date.getHours()}` : date.getHours();
-  const m = date.getMinutes().toString().length < 2 ? `0${date.getMinutes()}` : date.getMinutes();
-  const s = date.getSeconds().toString().length < 2 ? `0${date.getSeconds()}` : date.getSeconds();
-
-  return {
-    year: +year,
-    month: +month,
-    day: +day,
-    h: +h,
-    m: +m,
-    s: +s,
-    dateTime: `${year}-${month}-${day} ${h}:${m}:${s}`,
-    date: `${year}-${month}-${day}`,
-    time: `${h}:${m}:${s}`,
-    yearMonth: `${year}-${month}`,
-  }
-}
-
-function currentDate() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = `${today.getMonth() + 1}`.length < 2 ? `0${today.getMonth() + 1}` : today.getMonth() + 1;
-  const day = today.getDate().toString().length < 2 ? `0${today.getDate()}` : today.getDate();
-
-  const h = today.getHours().toString().length < 2 ? `0${today.getHours()}` : today.getHours();
-  const m = today.getMinutes().toString().length < 2 ? `0${today.getMinutes()}` : today.getMinutes();
-  const s = today.getSeconds().toString().length < 2 ? `0${today.getSeconds()}` : today.getSeconds();
-
-  return {
-    year: +year,
-    month: +month,
-    day: +day,
-    h: +h,
-    m: +m,
-    s: +s,
-    dateTime: `${year}-${month}-${day} ${h}:${m}:${s}`,
-    date: `${year}-${month}-${day}`,
-    time: `${h}:${m}:${s}`,
-    yearMonth: `${year}-${month}`,
-  }
-}
-
 const Weather = (props) => {
+  const {localDateFormat, currentDate} = useDate();
   const ctxAPI = useContext(APIContext);
   const [isExpand, setIsExpand] = useState(false);
-  //const ctxModal = useContext(ModalContext);
 
   const [date, setDate] = useState(currentDate().date);
 
@@ -73,7 +25,6 @@ const Weather = (props) => {
 
   const { isLoading, sendRequest: getWeather } = useHttp();
   const { host } = ctxAPI;
-  //const { onShown: showErrorPopup, onClose: closeErrorPopup } = ctxModal;
 
   const [weather, setWeather] = useState([]);
 
