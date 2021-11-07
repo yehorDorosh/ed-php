@@ -204,7 +204,7 @@ function AddItemForm() {
             name: 'itemAmount',
             min: 0,
             max: 999999999,
-            step: '.1',
+            step: '.01',
             placeholder: '0.00€'
           }}
           label="Item amount"

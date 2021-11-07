@@ -24,7 +24,7 @@ const LastWeather = (props) => {
 
   const [lastWeather, setLastWeather] = useState();
   const [pressureDiff, setPressureDiff] = useState();
-  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(3);
+  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(2);
 
   useEffect(() => {
     function getDateBeforeHours(h) {
