@@ -8,6 +8,7 @@ import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 import Button from '../UI/Button/Button';
 import Input from '../UI/Input/Input';
 import useDate from '../../hooks/use-date';
+import WeatherGraph from './WeatherGraph';
 
 import classes from "./Weather.module.scss";
 import cardClasses from '../UI/Card/Card.module.scss';
@@ -65,6 +66,7 @@ const Weather = (props) => {
             <Button btnText="Get data" />
           </div>
         </form>
+        <WeatherGraph data={weather} />
       {weather && (
         <div className={`${classes["table-scroll"]}`}>
           <table>
