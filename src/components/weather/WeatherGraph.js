@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 
 import classes from './WeatherGraph.module.scss';
+import useDate from '../../hooks/use-date';
 
 const WeatherGraph = (props) => {
+  const { localDateFormat } = useDate();
+
   const chartLib = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js';
   const { data } = props;
 
@@ -24,7 +27,7 @@ const WeatherGraph = (props) => {
     }
 
     window.chartData = {
-      date: data.map(row => row.reg_date),
+      date: data.map(row => localDateFormat(row.reg_date).dateTime),
       t: data.map(row => row.t),
       p: data.map(row => row.p / 1000),
       v: data.map(row => row.v),
@@ -45,7 +48,7 @@ const WeatherGraph = (props) => {
       removeChartScript();
       initChart();
     }
-  }, [data]);
+  }, [data, localDateFormat]);
   
 
   return (
