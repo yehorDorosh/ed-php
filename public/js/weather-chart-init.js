@@ -1,12 +1,13 @@
-(() => {
-  if ( !window.chartData || !Chart ) return;
-  const date = window.chartData.date;
-  const t =window.chartData.t;
-  const v =window.chartData.v;
-  const p =window.chartData.p;
+/* global Chart */
 
-  const myChart = new Chart("myChart", {
-    type: "line",
+(() => {
+  const data = window['chartData-weather-log-graph'];
+  if ( !data || !Chart ) return;
+  const date = data.date;
+  const t = data.t;
+
+  const myChart = new Chart('weather-log-graph', {
+    type: 'line',
     data: {
       labels: date,
       datasets: [{
@@ -15,18 +16,6 @@
         data: t,
         fill: false,
       },
-      // {
-      //   label: 'Pressure, kPa',
-      //   borderColor: 'blue',
-      //   data: p,
-      //   fill: false,
-      // },
-      // {
-      //   label: 'Voltage, V',
-      //   borderColor: 'green',
-      //   data: v,
-      //   fill: false,
-      // }
     ],
     },
     options: {}

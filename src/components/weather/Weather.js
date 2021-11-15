@@ -66,7 +66,7 @@ const Weather = (props) => {
             <Button btnText="Get data" />
           </div>
         </form>
-        <WeatherGraph data={weather} />
+        <WeatherGraph data={weather} id='weather-log-graph' path='/js/weather-chart-init.js' />
       {weather && (
         <div className={`${classes["table-scroll"]}`}>
           <table>

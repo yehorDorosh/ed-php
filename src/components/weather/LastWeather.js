@@ -8,6 +8,8 @@ import Card from '../UI/Card/Card';
 
 import classes from "./LastWeather.module.scss";
 import cardClasses from '../UI/Card/Card.module.scss';
+import WeatherGraph from './WeatherGraph';
+import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 
 // Liner interpolation https://www.trysmudford.com/blog/linear-interpolation-functions/
 const lerp = (x, y, a) => x * (1 - a) + y * a;
@@ -24,7 +26,10 @@ const LastWeather = (props) => {
 
   const [lastWeather, setLastWeather] = useState();
   const [pressureDiff, setPressureDiff] = useState();
-  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(2);
+  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(1);
+  const [weatherData, setWeatherData] = useState([]);
+  const [coefficients, setCoefficients] = useState({});
+  const [isExpand, setIsExpand] = useState(false);
 
   useEffect(() => {
     function getDateBeforeHours(h) {
@@ -38,6 +43,7 @@ const LastWeather = (props) => {
       if (!data.length) return null;
       const pressureLog = data.map(row => row.p);
       const coefficients = pressureAprox(pressureLog);
+      setCoefficients(coefficients);
   
       const y0 = coefficients.a * 1 + coefficients.b;
       const y1 = coefficients.a * pressureLog.length + coefficients.b;
@@ -64,6 +70,7 @@ const LastWeather = (props) => {
         },
         (response) => {
           setPressureDiff(getPressureChanging(response.data));
+          setWeatherData(response.data);
         }
       );
     }
@@ -89,6 +96,10 @@ const LastWeather = (props) => {
 
   function pressurePeriodHandler(e) {
     setPressureChangingPeriod(e.target.value);
+  }
+
+  function expandWeatherBlock() {
+    isExpand ? setIsExpand(false) : setIsExpand(true);
   }
 
   return (
@@ -122,34 +133,38 @@ const LastWeather = (props) => {
       </div>
       <p className={classes['text-center']}>Last mesurment</p>
       <div className={`${classes["table-scroll"]} ${classes["last-weather"]} ${classes.row}`}>
-      {lastWeather && (
-        <table>
-          <tbody>
-            <tr>
-              <th>ID</th>
-              <th>Date Time</th>
-              <th>Temperature, °C</th>
-              <th>Pressure, Pa</th>
-              <th>Altitude, m</th>
-              <th>Power supply, V</th>
-            </tr>
-            <tr>
-              <td>{lastWeather.id}</td>
-              <td>{localDateFormat(lastWeather.reg_date).dateTime}</td>
-              <td>{lastWeather.t} °C</td>
-              <td>{lastWeather.p} Pa</td>
-              <td>{lastWeather.a} m</td>
-              <td>{lastWeather.v} V</td>
-            </tr>
-            </tbody>
-        </table>
-      )}
-      { !lastWeather && <p>No weather data</p>}
-      {isLoading && (
-        <div className={classes.load}>
-          <div className={classes.loader}></div>
-        </div>
-      )}
+        {lastWeather && (
+          <table>
+            <tbody>
+              <tr>
+                <th>ID</th>
+                <th>Date Time</th>
+                <th>Temperature, °C</th>
+                <th>Pressure, Pa</th>
+                <th>Altitude, m</th>
+                <th>Power supply, V</th>
+              </tr>
+              <tr>
+                <td>{lastWeather.id}</td>
+                <td>{localDateFormat(lastWeather.reg_date).dateTime}</td>
+                <td>{lastWeather.t} °C</td>
+                <td>{lastWeather.p} Pa</td>
+                <td>{lastWeather.a} m</td>
+                <td>{lastWeather.v} V</td>
+              </tr>
+              </tbody>
+          </table>
+        )}
+        { !lastWeather && <p>No weather data</p>}
+        {isLoading && (
+          <div className={classes.load}>
+            <div className={classes.loader}></div>
+          </div>
+        )}
+      </div>
+      <ExpandBlock isExpand={isExpand} expandTarget={expandWeatherBlock} btnText='Pressure graph' />
+      <div className={`${isExpand ? 'shown' : 'hidden'}`}>
+        <WeatherGraph data={weatherData} id='weather-pressure-graph' coefficients={coefficients} path='/js/last-weather-chart-init.js' />
       </div>
     </Card>
   );
