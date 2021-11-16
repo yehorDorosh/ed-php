@@ -8,10 +8,10 @@ import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 import Button from '../UI/Button/Button';
 import Input from '../UI/Input/Input';
 import useDate from '../../hooks/use-date';
-import WeatherGraph from './WeatherGraph';
 
 import classes from "./Weather.module.scss";
 import cardClasses from '../UI/Card/Card.module.scss';
+import Graph from '../UI/Graph/Graph';
 
 const Weather = (props) => {
   const {localDateFormat, currentDate} = useDate();
@@ -28,6 +28,32 @@ const Weather = (props) => {
   const { host } = ctxAPI;
 
   const [weather, setWeather] = useState([]);
+  const [graphConfig, setGraphConfig] = useState({});
+
+  function buildGraphConfig(weatherData) {
+    if (!weatherData.length) return;
+
+    const t = weatherData.map(row => row.t);
+    const date = weatherData.map(row => localDateFormat(row.reg_date).dateTime);
+
+    const config = {
+      type: "line",
+      data: {
+        labels: date,
+        datasets: [
+          {
+            label: 'Temperature, °C',
+            borderColor: 'red',
+            data: t,
+            fill: false,
+          }
+        ],
+      },
+      options: {}
+    }
+
+    setGraphConfig(config);
+  }
 
   function makeWeatherRequest(e) {
     e.preventDefault();
@@ -38,6 +64,7 @@ const Weather = (props) => {
       },
       (response) => {
         setWeather(response.data);
+        buildGraphConfig(response.data);
       }
     );
   }
@@ -66,7 +93,7 @@ const Weather = (props) => {
             <Button btnText="Get data" />
           </div>
         </form>
-        <WeatherGraph data={weather} id='weather-log-graph' path='/js/weather-chart-init.js' />
+        <Graph id='weatherTemperatureGraph'  graphConfig={graphConfig}/>
       {weather && (
         <div className={`${classes["table-scroll"]}`}>
           <table>

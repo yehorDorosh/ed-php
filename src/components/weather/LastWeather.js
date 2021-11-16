@@ -8,8 +8,8 @@ import Card from '../UI/Card/Card';
 
 import classes from "./LastWeather.module.scss";
 import cardClasses from '../UI/Card/Card.module.scss';
-import WeatherGraph from './WeatherGraph';
 import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
+import Graph from '../UI/Graph/Graph';
 
 // Liner interpolation https://www.trysmudford.com/blog/linear-interpolation-functions/
 const lerp = (x, y, a) => x * (1 - a) + y * a;
@@ -26,9 +26,8 @@ const LastWeather = (props) => {
 
   const [lastWeather, setLastWeather] = useState();
   const [pressureDiff, setPressureDiff] = useState();
-  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(1);
-  const [weatherData, setWeatherData] = useState([]);
-  const [coefficients, setCoefficients] = useState({});
+  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(2);
+  const [graphConfig, setGraphConfig] = useState({});
   const [isExpand, setIsExpand] = useState(false);
 
   useEffect(() => {
@@ -43,15 +42,62 @@ const LastWeather = (props) => {
       if (!data.length) return null;
       const pressureLog = data.map(row => row.p);
       const coefficients = pressureAprox(pressureLog);
-      setCoefficients(coefficients);
   
       const y0 = coefficients.a * 1 + coefficients.b;
       const y1 = coefficients.a * pressureLog.length + coefficients.b;
       const pressureDiff = y1 - y0;
-
-      //console.log('Pressure', pressureLog);
   
-      return Math.round(pressureDiff);
+      return {
+        diff: Math.round(pressureDiff),
+        k: coefficients
+      };
+    }
+
+    function buildGraphConfig(weatherData) {
+      if (!weatherData.length) return;
+
+      const p = weatherData.map(row => row.p);
+      const date = weatherData.map(row => localDateFormat(row.reg_date).dateTime);
+      const f = getPressureChanging(weatherData).k;
+      let line = [];
+
+      if (!Object.keys(f).length) return;
+
+      buildLine(f, p);
+
+      function buildLine(k, p) {
+        for (let x = 1; x <= p.length; x++) {
+          line.push(k.a * x + k.b)
+        }
+      }
+
+      const config = {
+        type: "line",
+        data: {
+          labels: date,
+          datasets: [
+            {
+              type: "scatter",
+              pointRadius: 4,
+              label: 'Pressure, Pa',
+              borderColor: 'blue',
+              data: p,
+              fill: false,
+            },
+            {
+              type: 'line',
+              label: `Aproximation y=${f.a.toFixed(0)}*x + ${f.b.toFixed(0)}`,
+              fill: false,
+              pointRadius: 1,
+              borderColor: "rgba(255,0,0,0.5)",
+              data: line
+            }
+          ],
+        },
+        options: {}
+      }
+
+      setGraphConfig(config);
     }
 
     function makeWeatherRequest() {
@@ -69,8 +115,8 @@ const LastWeather = (props) => {
           url: `${host}/api/weather.php?id=1&dateFrom=${getDateBeforeHours(pressureChangingPeriod).dateTime}&dateTo=${serverCurrentTime().dateTime}`,
         },
         (response) => {
-          setPressureDiff(getPressureChanging(response.data));
-          setWeatherData(response.data);
+          setPressureDiff(getPressureChanging(response.data).diff);
+          buildGraphConfig(response.data);
         }
       );
     }
@@ -84,7 +130,17 @@ const LastWeather = (props) => {
     return () => {
       clearTimeout(timerID);
     };
-  }, [host, getWeather, pressureAprox, currentDate, dateFormat, serverCurrentTime, pressureChangingPeriod]);
+  }, [
+      host,
+      getWeather,
+      pressureAprox,
+      currentDate,
+      dateFormat,
+      serverCurrentTime,
+      localDateFormat,
+      pressureChangingPeriod,
+    ]
+  );
 
   function renderLeftBar(pressure) {
     return range(-250, 0, 0, 50, pressure);
@@ -164,7 +220,7 @@ const LastWeather = (props) => {
       </div>
       <ExpandBlock isExpand={isExpand} expandTarget={expandWeatherBlock} btnText='Pressure graph' />
       <div className={`${isExpand ? 'shown' : 'hidden'}`}>
-        <WeatherGraph data={weatherData} id='weather-pressure-graph' coefficients={coefficients} path='/js/last-weather-chart-init.js' />
+        <Graph id='weatherPressureGraph'  graphConfig={graphConfig} />
       </div>
     </Card>
   );
