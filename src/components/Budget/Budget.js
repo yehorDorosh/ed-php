@@ -267,9 +267,9 @@ function Budget() {
           <div>
             <p>Total statistics</p>
             <ul>
-              <li>Total epxenses: {totalExpenses}</li>
-              <li>Total income: {totalIncome}</li>
-              <li>Balance: {balance}</li>
+              <li>Total epxenses: {totalExpenses.toFixed(2)}</li>
+              <li>Total income: {totalIncome.toFixed(2)}</li>
+              <li>Balance: {balance.toFixed(2)}</li>
             </ul>
           </div>
           <CategoryStatistics categoryList={categoryList} itemList={filteredItemList} />

@@ -5,13 +5,13 @@ function CategoryStatistics(props) {
   const statistics = categoryList.map((categoryName) => {
     const categoryTotal = props.itemList.reduce((acc, curr) => {
       if(curr.category === categoryName) {
-        return acc + +curr.amount;
+        return (acc + +curr.amount);
       } else {
         return acc;
       }
     }, 0);
     return {
-      [categoryName]: categoryTotal
+      [categoryName]: categoryTotal.toFixed(2)
     }
   });
 
