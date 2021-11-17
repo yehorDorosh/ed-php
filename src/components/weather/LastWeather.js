@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 
 import useHttp from "../../hooks/use-http";
 import useAprox from '../../hooks/use-aprox';
@@ -29,6 +29,7 @@ const LastWeather = (props) => {
   const [pressureChangingPeriod, setPressureChangingPeriod] = useState(2);
   const [graphConfig, setGraphConfig] = useState({});
   const [isExpand, setIsExpand] = useState(false);
+  const [isDataRecived, setIsDataRecived] = useState(false);
 
   useEffect(() => {
     function getDateBeforeHours(h) {
@@ -115,6 +116,8 @@ const LastWeather = (props) => {
           url: `${host}/api/weather.php?id=1&dateFrom=${getDateBeforeHours(pressureChangingPeriod).dateTime}&dateTo=${serverCurrentTime().dateTime}`,
         },
         (response) => {
+          if (!response.data.length) return;
+          setIsDataRecived(true);
           setPressureDiff(getPressureChanging(response.data).diff);
           buildGraphConfig(response.data);
         }
@@ -218,10 +221,14 @@ const LastWeather = (props) => {
           </div>
         )}
       </div>
-      <ExpandBlock isExpand={isExpand} expandTarget={expandWeatherBlock} btnText='Pressure graph' />
-      <div className={`${isExpand ? 'shown' : 'hidden'}`}>
-        <Graph id='weatherPressureGraph'  graphConfig={graphConfig} />
-      </div>
+      { isDataRecived && (
+        <Fragment>
+          <ExpandBlock isExpand={isExpand} expandTarget={expandWeatherBlock} btnText='Pressure graph' />
+          <div className={`${isExpand ? 'shown' : 'hidden'}`}>
+            <Graph id='weatherPressureGraph'  graphConfig={graphConfig} />
+          </div>
+        </Fragment>
+      )}
     </Card>
   );
 }

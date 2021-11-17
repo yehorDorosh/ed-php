@@ -64,6 +64,7 @@ const Weather = (props) => {
       },
       (response) => {
         setWeather(response.data);
+        if (!response.data.length) return;
         buildGraphConfig(response.data);
       }
     );
@@ -93,7 +94,7 @@ const Weather = (props) => {
             <Button btnText="Get data" />
           </div>
         </form>
-        <Graph id='weatherTemperatureGraph'  graphConfig={graphConfig}/>
+        { weather.length !== 0 && <Graph id='weatherTemperatureGraph'  graphConfig={graphConfig}/>}
       {weather && (
         <div className={`${classes["table-scroll"]}`}>
           <table>
