@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import classes from './Graph.module.scss';
 
@@ -7,29 +7,30 @@ const Graph = (props) => {
   const { id, graphConfig } = props;
 
   useEffect(() => {
-    const chartLib = document.getElementById('chart-lib');
+    function createGraph() {
+      if (Object.keys(graphConfig).length !== 0) {
+        new window.Chart(id, graphConfig);
+      }
+    }
 
-    if (!chartLib) {
-      const chartScript = document.createElement('script');
+    let chartScript = document.getElementById('chart-lib');
+
+    if (!chartScript) {
+      chartScript = document.createElement('script');
       chartScript.src = graphLib;
       chartScript.id = 'chart-lib';
       document.body.appendChild(chartScript);
     }
 
-    if (window.Chart) {
-      new window.Chart(id, graphConfig);
-    }
+    if (!window.Chart) chartScript.onload = createGraph;
+    else createGraph();
   }, [id, graphConfig]);
   
 
   return (
-    <Fragment>
-      {(window.Chart && Object.keys(graphConfig).length !== 0)  && (
-        <div className={classes['graph-container']}>
-          <canvas id={props.id} className={classes.graph}></canvas>
-        </div>
-      )}
-    </Fragment>
+    <div className={classes['graph-container']}>
+      <canvas id={props.id} className={classes.graph}></canvas>
+    </div>
   );
 }
 

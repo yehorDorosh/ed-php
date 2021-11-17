@@ -29,7 +29,6 @@ const LastWeather = (props) => {
   const [pressureChangingPeriod, setPressureChangingPeriod] = useState(2);
   const [graphConfig, setGraphConfig] = useState({});
   const [isExpand, setIsExpand] = useState(false);
-  const [isDataRecived, setIsDataRecived] = useState(false);
 
   useEffect(() => {
     function getDateBeforeHours(h) {
@@ -117,7 +116,6 @@ const LastWeather = (props) => {
         },
         (response) => {
           if (!response.data.length) return;
-          setIsDataRecived(true);
           setPressureDiff(getPressureChanging(response.data).diff);
           buildGraphConfig(response.data);
         }
@@ -221,7 +219,7 @@ const LastWeather = (props) => {
           </div>
         )}
       </div>
-      { isDataRecived && (
+      { Object.keys(graphConfig).length !== 0 && (
         <Fragment>
           <ExpandBlock isExpand={isExpand} expandTarget={expandWeatherBlock} btnText='Pressure graph' />
           <div className={`${isExpand ? 'shown' : 'hidden'}`}>
