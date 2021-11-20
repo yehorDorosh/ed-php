@@ -1,0 +1,61 @@
+@import '../../styles/components/loader.scss';
+@import '../../styles/vars.scss';
+
+$row-half-interval: 8px;
+
+.form {
+  position: relative;
+  padding: 16px 0;
+  position: relative;
+  border: solid 1px $main-font-color;
+  padding: 8px;
+
+  textarea {
+    min-width: 100%;
+    min-height: 300px;
+    font-size: 0.8rem;
+  }
+  
+
+  .btn-row {
+    text-align: right;
+  }
+
+  .row {
+    margin-top: $row-half-interval;
+    margin-bottom: $row-half-interval;
+  
+    &:first-child {
+      margin-top: 0;
+      margin-bottom: $row-half-interval;
+    }
+
+    &:last-child {
+      margin-top: $row-half-interval;
+      margin-bottom: 0;
+    }
+
+    label {
+      padding-right: 4px;
+    }
+  }
+
+  & .category-select {
+    display: flex;
+    justify-content: space-between;
+
+    & .radio {
+      width: 50%;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      align-items: center;
+
+      label,
+      input {
+        padding: 0 4px;
+        cursor: pointer;
+        flex: none;
+      }
+    }
+  }
+}

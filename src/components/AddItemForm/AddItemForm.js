@@ -13,6 +13,7 @@ import ModalContext from '../../store/modal-context';
 import useHttp from '../../hooks/use-http';
 import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 import { fetchBudgetList } from '../../store/budgetActions';
+import ImportForm from './ImportForm';
 
 import classes from './AddItemForm.module.scss';
 import cardClasses from '../UI/Card/Card.module.scss';
@@ -237,6 +238,9 @@ function AddItemForm() {
           </div>
         )}
       </form>
+      <div>
+        <ImportForm />
+      </div>
     </Card>
   );
 }

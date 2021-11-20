@@ -23,6 +23,7 @@ const Input = React.forwardRef((props, ref) => {
         onBlur={props.onBlur}
         onClick={props.onClick}
         value={props.value}
+        defaultValue={props.defaultValue}
       />
       {errorMsg}
     </div>
