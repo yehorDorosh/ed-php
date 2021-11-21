@@ -101,9 +101,16 @@ if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
   if (is_array($recivedData)) {
     $email = $recivedData["email"];
     $userName = str_replace('.', '', strstr($email, "@", true));
-    if ($recivedData["categoryName"] && checkTable($userName, $connConfig) && $recivedData["categoryName"] !== 'all') {
-      $newCategoryList = removeCategory($recivedData["categoryName"], $categoryMap[$recivedData["categoryType"]], $userName, $connConfig, $dbError);
+    $renameCategory = $recivedData["renameCategory"];
+    $categoryName = $recivedData["categoryName"];
+    if ($categoryName && checkTable($userName, $connConfig) && $categoryName !== 'all') {
+      $newCategoryList = removeCategory($categoryName, $categoryMap[$recivedData["categoryType"]], $userName, $connConfig, $dbError);
       $dbError = saveValueToDbCell($categoryMap[$recivedData["categoryType"]], 'parameter', $newCategoryList, 'value', $userName, $connConfig);
+      if (!$dbError["error"]) {
+        $dbError = array_merge($dbError,
+          updateValueByTwoCondition($email, 'email', $categoryName, 'category', $renameCategory, 'category', 'budget', $connConfig)
+        );
+      }
       if (!$dbError["error"]) {
         $recivedData["code"] = 0;
       } else {

@@ -94,6 +94,36 @@ function saveValueToDbCell($rowName, $rowNameCol, $value, $valueCol, $tableName,
   return $response;
 }
 
+function updateValueByTwoCondition(
+  $condition1,
+  $condition1ColName,
+  $condition2,
+  $condition2ColName,
+  $value,
+  $valueCol,
+  $tableName,
+  $connConfig
+) {
+  $response = [
+    "error"=>FALSE,
+    "errorMessage"=>""
+  ];
+  // Connection
+  $conn = connToDb($connConfig, $response);
+  if (!$conn) return $response;
+  // write
+  $sqlSaveValue = "UPDATE $tableName
+    SET $valueCol = '$value'
+    WHERE $condition1ColName = '$condition1' AND $condition2ColName = '$condition2'";
+  if ($conn->query($sqlSaveValue) === FALSE) {
+    $response["error"] = TRUE;
+    $response["errorMessage"] = "Error: " . $sqlSaveValue . "<br>" . $conn->error;
+    return $response;
+  }
+  $conn->close();
+  return $response;
+}
+
 function saveDataToDB($value, $col, $tableName, $connConfig) {
   $response = [
     "error"=>FALSE,

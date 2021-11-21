@@ -1,19 +1,22 @@
-import React, { useEffect, useContext, Fragment } from "react";
+import React, { useEffect, useContext, Fragment, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from "uuid";
 
 import Button from "../UI/Button/Button";
+import Select from '../UI/Select/Select';
 import useHttp from "../../hooks/use-http";
 import APIContext from "../../store/api-context";
 import AuthContext from "../../store/auth-context";
 import ModalContext from "../../store/modal-context";
 import { categoryActions } from '../../store/category-slice';
+import { fetchBudgetList } from '../../store/budgetActions';
 
 import classes from "./CategoryList.module.scss";
 import classesButton from "../../components/UI/Button/Button.module.scss";
 
 function CategoryList(props) {
   const dispatch = useDispatch();
+  const [renameCategory, setRenameCategory] = useState();
 
   const ctxAPI = useContext(APIContext);
   const ctxAuth = useContext(AuthContext);
@@ -66,7 +69,7 @@ function CategoryList(props) {
     dispatch
   ]);
 
-  function removeCategory(categoryName) {
+  function removeCategory(categoryName, renameCategory) {
     removeCategoryRequest(
       {
         url: `${ctxAPI.host}/api/category.php/`,
@@ -75,6 +78,7 @@ function CategoryList(props) {
           email: ctxAuth.email,
           categoryType,
           categoryName,
+          renameCategory
         },
       },
       (data) => {
@@ -83,6 +87,7 @@ function CategoryList(props) {
             category: categoryList.filter((item) => item !== categoryName),
             categoryType
           }));
+          dispatch(fetchBudgetList(host, email));
         } else if (data.code === 1) {
           showErrorPopup(
             <Fragment>
@@ -96,6 +101,10 @@ function CategoryList(props) {
     );
   }
 
+  function renameCategoryHandler(e) {
+    setRenameCategory(e.target.value);
+  }
+
   return (
     <ul className={classes["category-list"]}>
       {categoryList && categoryList.map((item) => {
@@ -104,11 +113,21 @@ function CategoryList(props) {
           <li key={id} id={id} className={`${classes.row} ${item === 'all' ? classes['row--first'] : '' }`}>
             <span>{item}</span>
             {item !== 'all' && (
-              <Button
-                btnText="Delete category"
-                onClick={removeCategory.bind(null, item)}
-                className={classesButton['btn--red']}
-              />
+              <div>
+                <Select
+                  label='Rename category to'
+                  option={categoryList.filter(category => category !== item)}
+                  customClasses={''}
+                  value={renameCategory}
+                  onChange={renameCategoryHandler}
+                  onBlur={renameCategoryHandler}
+                />
+                <Button
+                  btnText="Delete category"
+                  onClick={removeCategory.bind(null, item, renameCategory)}
+                  className={classesButton['btn--red']}
+                />
+              </div>
             )}
           </li>
         );
