@@ -2,9 +2,7 @@ import React, { Fragment, useState, useContext, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Button from '../UI/Button/Button';
-//import Input from '../UI/Input/Input';
 import Select from '../UI/Select/Select';
-//import useInput from '../../hooks/use-input';
 import APIContext from '../../store/api-context';
 import AuthContext from '../../store/auth-context';
 import ModalContext from '../../store/modal-context';
@@ -62,14 +60,13 @@ function BudgetTable(props) {
         setCategoryType(row.category_type);
 
         if(editing !== '') {
-          editItem(
-            row.id,
-            nameInput.current.value,
-            amountInput.current.value,
-            categoryInput.current.value,
-            dateInput.current.value,
-            typeInput.current.value,
-          );
+          const name = nameInput.current.value;
+          const amount = amountInput.current.value;
+          const category = categoryInput.current.value;
+          const date = dateInput.current.value;
+          const type = typeInput.current.value;
+          if (!name || !amount || !category || !date || !type) return;
+          editItem(row.id, name.trim(), amount, category, date, type);
           cancelEdition();
         }
       }
