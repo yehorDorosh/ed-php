@@ -13,6 +13,7 @@ const Select = React.forwardRef((props, ref) => {
         id={props.id}
         onChange={props.onChange}
         value={props.value}
+        defaultValue={props.defaultValue}
       >
         {props.option && props.option.map((option) => {
           const id = `${option}-${uuidv4()}`;

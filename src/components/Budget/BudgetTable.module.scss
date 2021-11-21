@@ -4,12 +4,16 @@
 
 .table {
   width: 100%;
-
-  th {
-    text-align: left;
-  }
 }
 
 .text-center {
   text-align: center;
+}
+
+input {
+  border-radius: 4px;
+}
+
+.btn-container {
+  padding: 4px 0;
 }

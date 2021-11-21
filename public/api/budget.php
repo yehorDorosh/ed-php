@@ -63,6 +63,41 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
   }
 }
 
+if ($_SERVER["REQUEST_METHOD"] == 'PUT') {
+  $recivedData = json_decode(file_get_contents('php://input'), true);
+  if (is_array($recivedData)) {
+    $id = $recivedData['id'];
+    $email = $recivedData['email'];
+    $log_date = $recivedData['logDate'];
+    $date = $recivedData['date'];
+    $category_type = $recivedData['categoryType'];
+    $category = $recivedData['category'];
+    $name = $recivedData['name'];
+    $amount = $recivedData['amount'];
+
+    if (checkTable($tableName, $connConfig)) {
+      $dbError = array_merge($dbError, saveValueToDbCell($id, 'id', $name, 'name', $tableName, $connConfig));
+      $dbError = array_merge($dbError, saveValueToDbCell($id, 'id', $amount, 'amount', $tableName, $connConfig));
+      $dbError = array_merge($dbError, saveValueToDbCell($id, 'id', $category, 'category', $tableName, $connConfig));
+      $dbError = array_merge($dbError, saveValueToDbCell($id, 'id', $date, 'date', $tableName, $connConfig));
+      $dbError = array_merge($dbError, saveValueToDbCell($id, 'id', $log_date, 'log_date', $tableName, $connConfig));
+      $dbError = array_merge($dbError, saveValueToDbCell($id, 'id', $category_type, 'category_type', $tableName, $connConfig));
+      $recivedData["code"] = 0;
+    } else {
+      $recivedData["code"] = 1; // Invalid income data or budget config table doesn't exist
+      $recivedData["errorMsg"] = "Invalid income data or budget config table doesn't exist";
+    }
+
+    if ($dbError['error']) {
+      $recivedData["code"] = 2; // DB error
+      $recivedData["errorMsg"] = $dbError['errorMessage'];
+    }
+    
+    $recivedData["db"] = $dbError;
+    echo json_encode($recivedData);
+  }
+}
+
 if (
   $_SERVER["REQUEST_METHOD"] == "GET" &&
   $_GET["email"]
