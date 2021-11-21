@@ -46,6 +46,22 @@ function removeCategory($categoryName, $categoryType, $userConfigTable, $connCon
   }
 }
 
+function renameCategory($oldName, $newName, $categoryType, $userConfigTable, $connConfig, &$dbError) {
+  $newName = strtolower(trim($newName));
+  $response = readCellFromRow('parameter', $categoryType, 'value', $userConfigTable, $connConfig);
+  if($response['error']) {
+    $dbError = $response;
+    return;
+  }
+  $categoryArr = json_decode($response['data']);
+  if (in_array($newName, $categoryArr)) return json_encode($categoryArr);
+  $categoryArr = array_map(function($item) use ($oldName, $newName) {
+    return $item == $oldName ? $newName : $item;
+  }, $categoryArr);
+  $categoryArr = array_values($categoryArr);
+  return json_encode($categoryArr);
+}
+
 if (
   $_SERVER["REQUEST_METHOD"] == "GET" &&
   $_GET["email"] &&
@@ -109,6 +125,37 @@ if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
       if (!$dbError["error"]) {
         $dbError = array_merge($dbError,
           updateValueByTwoCondition($email, 'email', $categoryName, 'category', $renameCategory, 'category', 'budget', $connConfig)
+        );
+      }
+      if (!$dbError["error"]) {
+        $recivedData["code"] = 0;
+      } else {
+        $recivedData["code"] = 1; // DB error
+        $recivedData["errorMsg"] = "DB error";
+      }
+    } else {
+      $recivedData["code"] = 2; // Invalid category name or user config table doesn't exist
+      $recivedData["errorMsg"] = "Invalid category name or user config table doesn't exist";
+    }
+  }
+
+  $recivedData["db"] = $dbError;
+  echo json_encode($recivedData);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "PUT") {
+  $recivedData = json_decode(file_get_contents('php://input'), true);
+  if (is_array($recivedData)) {
+    $email = $recivedData["email"];
+    $userName = str_replace('.', '', strstr($email, "@", true));
+    $oldName = $recivedData["oldName"];
+    $newName = $recivedData["newName"];
+    if (checkTable($userName, $connConfig) && $oldName !== 'all') {
+      $newCategoryList = renameCategory($oldName, $newName, $categoryMap[$recivedData["categoryType"]], $userName, $connConfig, $dbError);
+      $dbError = saveValueToDbCell($categoryMap[$recivedData["categoryType"]], 'parameter', $newCategoryList, 'value', $userName, $connConfig);
+      if (!$dbError["error"]) {
+        $dbError = array_merge($dbError,
+          updateValueByTwoCondition($email, 'email', $oldName, 'category', $newName, 'category', 'budget', $connConfig)
         );
       }
       if (!$dbError["error"]) {
