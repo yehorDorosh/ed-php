@@ -8,6 +8,22 @@ $row-half-interval: 8px;
   flex-direction: column;
 }
 
+.btns {
+  display: flex;
+}
+
+.edit-btns {
+  display: flex;
+}
+
+.btn-container {
+  padding: 0 4px;
+}
+
+.select {
+  padding: 0 8px;
+}
+
 .row {
   display: flex;
   justify-content: space-between;

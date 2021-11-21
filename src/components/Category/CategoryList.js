@@ -177,8 +177,8 @@ function CategoryList(props) {
               {item === editing && (<input ref={categoryInput} type='text' defaultValue={item} />)}
             </span>
             {item !== 'all' && (
-              <div>
-                <div>
+              <div className={classes.btns}>
+                <div className={classes['edit-btns']}>
                   <div className={classes['btn-container']}>
                     <Button
                       btnText={item === editing ? 'Save' : 'Edit'}
@@ -199,7 +199,7 @@ function CategoryList(props) {
                 <Select
                   label='Rename category to'
                   option={categoryList.filter(category => category !== item)}
-                  customClasses={''}
+                  customClasses={classes.select}
                   value={renameCategory}
                   onChange={renameCategoryHandler}
                   onBlur={renameCategoryHandler}
