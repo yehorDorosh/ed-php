@@ -8,10 +8,13 @@ import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 import Button from '../UI/Button/Button';
 import Input from '../UI/Input/Input';
 import useDate from '../../hooks/use-date';
+import Select from '../UI/Select/Select';
 
 import classes from "./Weather.module.scss";
 import cardClasses from '../UI/Card/Card.module.scss';
 import Graph from '../UI/Graph/Graph';
+
+const IDs = ['1', 'out-of-door', '2nd-floor'];
 
 const Weather = (props) => {
   const {localDateFormat, currentDate} = useDate();
@@ -19,6 +22,7 @@ const Weather = (props) => {
   const [isExpand, setIsExpand] = useState(false);
 
   const [date, setDate] = useState(currentDate().date);
+  const [id, setId] = useState('1');
 
   function expandWeatherBlock() {
     isExpand ? setIsExpand(false) : setIsExpand(true);
@@ -60,7 +64,7 @@ const Weather = (props) => {
   
     getWeather(
       {
-        url: `${host}/api/weather.php?id=1&date=${date}`,
+        url: `${host}/api/weather.php?id=${id}&date=${date}`,
       },
       (response) => {
         setWeather(response.data);
@@ -72,6 +76,10 @@ const Weather = (props) => {
 
   function dayHandler(e) {
     setDate(e.target.value);
+  }
+
+  function idInputHandler(e) {
+    setId(e.target.value);
   }
 
   return (
@@ -89,6 +97,15 @@ const Weather = (props) => {
             value={date}
             onChange={dayHandler}
             onBlur={dayHandler}
+            customClasses={classes['mb-2']}
+          />
+          <Select
+            label='Sensor ID'
+            option={IDs}
+            value={id}
+            customClasses={''}
+            onChange={idInputHandler}
+            onBlur={idInputHandler}
           />
           <div className={`${classes.row}`}>
             <Button btnText="Get data" />
