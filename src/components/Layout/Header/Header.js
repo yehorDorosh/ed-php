@@ -37,10 +37,10 @@ function Header() {
         method: 'POST',
         body: {
           id: '1',
-          t: 30.1,
-          p: '101799',
+          t: 0,
+          p: '101000',
           a: '55',
-          v: '3.3'
+          v: '3.0'
         }
       },
       (data) => {

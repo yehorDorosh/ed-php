@@ -11,6 +11,8 @@ import cardClasses from '../UI/Card/Card.module.scss';
 import ExpandBlock from '../UI/ExpandBlock/ExpandBlock';
 import Graph from '../UI/Graph/Graph';
 
+const IDs = ['1', 'out-of-door', '2nd-floor'];
+
 // Liner interpolation https://www.trysmudford.com/blog/linear-interpolation-functions/
 const lerp = (x, y, a) => x * (1 - a) + y * a;
 const clamp = (a, min = 0, max = 1) => Math.min(max, Math.max(min, a));
@@ -24,7 +26,7 @@ const LastWeather = (props) => {
   const {localDateFormat, dateFormat, currentDate, serverCurrentTime} = useDate();
   const { host } = ctxAPI;
 
-  const [lastWeather, setLastWeather] = useState();
+  const [lastWeather, setLastWeather] = useState([]);
   const [pressureDiff, setPressureDiff] = useState();
   const [pressureChangingPeriod, setPressureChangingPeriod] = useState(2);
   const [graphConfig, setGraphConfig] = useState({});
@@ -101,25 +103,43 @@ const LastWeather = (props) => {
     }
 
     function makeWeatherRequest() {
-      getWeather(
-        {
-          url: `${host}/api/weather.php?id=1`,
-        },
-        (response) => {
-          setLastWeather(response.data[0]);
-        }
-      );
+      setLastWeather([]);
 
-      getWeather(
-        {
-          url: `${host}/api/weather.php?id=1&dateFrom=${getDateBeforeHours(pressureChangingPeriod).dateTime}&dateTo=${serverCurrentTime().dateTime}`,
-        },
-        (response) => {
-          if (!response.data.length) return;
-          setPressureDiff(getPressureChanging(response.data).diff);
-          buildGraphConfig(response.data);
-        }
-      );
+      IDs.forEach(id => {
+        getWeather(
+          {
+            url: `${host}/api/weather.php?id=${id}`,
+          },
+          (response) => {
+            const data = response.data;
+            if (Array.isArray(data)) {
+              setLastWeather(prev => {
+                return prev.concat(data);
+              });
+            }
+          }
+        );
+      });
+
+      let diffWaether = [];
+      IDs.forEach(id => {
+        getWeather(
+          {
+            url: `${host}/api/weather.php?id=${id}&dateFrom=${getDateBeforeHours(pressureChangingPeriod).dateTime}&dateTo=${serverCurrentTime().dateTime}`,
+          },
+          (response) => {
+            const data = response.data;
+            if (!data.length) return;
+            diffWaether = diffWaether.concat(data);
+            diffWaether.sort((a, b) => {
+              return new Date(a.reg_date) - new Date(b.reg_date);
+            });
+            const pDiff = diffWaether.length && getPressureChanging(diffWaether).diff;
+            setPressureDiff(pDiff);
+            buildGraphConfig(diffWaether);
+          }
+        );
+      });
     }
 
     makeWeatherRequest();
@@ -190,7 +210,7 @@ const LastWeather = (props) => {
       </div>
       <p className={classes['text-center']}>Last mesurment</p>
       <div className={`${classes["table-scroll"]} ${classes["last-weather"]} ${classes.row}`}>
-        {lastWeather && (
+        {lastWeather.length !== 0 && (
           <table>
             <tbody>
               <tr>
@@ -201,18 +221,20 @@ const LastWeather = (props) => {
                 <th>Altitude, m</th>
                 <th>Power supply, V</th>
               </tr>
-              <tr>
-                <td>{lastWeather.id}</td>
-                <td>{localDateFormat(lastWeather.reg_date).dateTime}</td>
-                <td>{lastWeather.t} °C</td>
-                <td>{lastWeather.p} Pa</td>
-                <td>{lastWeather.a} m</td>
-                <td>{lastWeather.v} V</td>
-              </tr>
+              {lastWeather.map(row => (
+                <tr key={row.id}>
+                  <td>{row.id}</td>
+                  <td>{localDateFormat(row.reg_date).dateTime}</td>
+                  <td>{row.t} °C</td>
+                  <td>{row.p} Pa</td>
+                  <td>{row.a} m</td>
+                  <td>{row.v} V</td>
+                </tr>
+              ))}
               </tbody>
           </table>
         )}
-        { !lastWeather && <p>No weather data</p>}
+        { lastWeather.length === 0 && <p>No weather data</p>}
         {isLoading && (
           <div className={classes.load}>
             <div className={classes.loader}></div>
