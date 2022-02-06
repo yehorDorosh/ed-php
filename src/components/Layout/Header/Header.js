@@ -16,6 +16,14 @@ function Header() {
   const ctxAuth = useContext(AuthContext);
 
   function deleteUser() {
+    let deleteIsConfirmed = window.confirm('Are you sure that you want to delete the account with all saved data?');
+    if (!deleteIsConfirmed) return;
+    let enteredEmail = window.prompt('Enter your email to confirm account deleting.');
+    if (enteredEmail === null) return;
+    if ( enteredEmail !== ctxAuth.email) {
+      window.alert('Entered email does not mutch with current account.');
+      return;
+    }
     sendDeleteUserRequest(
       {
         url: `${ctxAPI.host}/api/rm-user.php/`,

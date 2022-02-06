@@ -2,8 +2,8 @@
 * Build image <br>
 `$ docker build [OPTIONS] PATH_TO_DOCKER_FILE`
 
-* [Example] Build image with name test-image <br>
-`$ docker build -t test-image path/to/Docker/File`
+* [Example] Build image with name sandbox <br>
+`$ docker build -t sandbox .`
 
 * Show all images <br>
 `$ docker images -a`
@@ -61,6 +61,7 @@ or
 `docker-compose down`
 
 # DEV
+* `$ docker build -t sandbox .` Only Once. Create img from docker file for "www" container
 * `docker-compose up -d`
 * `npm start`
 *  container ed-php - mysql  `Attach shell`
