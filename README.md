@@ -65,6 +65,8 @@ or
 * `docker-compose up -d`
 * `npm start`
 *  container ed-php - mysql  `Attach shell`
+*  `mysql -u root -p main_db < /dump/main_db_dump.sql` export db from dump (optional. required db dump)
+*  password `root`
 *  `mysql -u root -p`
 *  password `root`
 *  `use main_db;`

@@ -11,8 +11,8 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     ports:
       - 3306:3306
-    # volumes:
-    #   - ./mysql:/docker-entrypoint-initdb.d
+    volumes:
+      - /Users/egor.dorosh/private/sites/ed-php/dump:/dump
     # networks:
     #   - web-db-net
 
