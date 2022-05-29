@@ -75,3 +75,4 @@ or
 # MySQL
 * Get last row from Weather table, id=1 `select * from weather where reg_date in (select max(reg_date) from weather where id='1');`
 * Date period `SELECT * FROM weather WHERE id='1' AND reg_date BETWEEN '2021-11-06 20:21:36' and '2021-11-06 22:21:36'`
+* Create DB dump `mysqldump --no-tablespaces -u admin -p main_db > main_db_dump.sql`
