@@ -9,7 +9,8 @@ const Graph = (props) => {
   useEffect(() => {
     function createGraph() {
       if (Object.keys(graphConfig).length !== 0) {
-        new window.Chart(id, graphConfig);
+        window.id?.destroy();
+        window.id = new window.Chart(id, graphConfig);
       }
     }
 
