@@ -1,4 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import useHttp from "../../hooks/use-http";
 import useAprox from '../../hooks/use-aprox';
@@ -103,18 +104,29 @@ const LastWeather = (props) => {
     }
 
     function makeWeatherRequest() {
-      setLastWeather([]);
-
       IDs.forEach(id => {
         getWeather(
           {
             url: `${host}/api/weather.php?id=${id}`,
           },
           (response) => {
-            const data = response.data;
+            let data = response.data;
+
             if (Array.isArray(data)) {
+              data = data[0];
+
               setLastWeather(prev => {
-                return prev.concat(data);
+                const isPresent = prev.some(item => item.id === data.id);
+                const updLastWeather = [...prev];
+                if (isPresent) {
+                  prev.forEach((item, i) => {
+                    if (item.id === data.id) updLastWeather[i] = data;
+                  });
+                } else {
+                  updLastWeather.push(data);
+                }
+
+                return updLastWeather.sort((a, b) => a.id.localeCompare(b.id));
               });
             }
           }
@@ -144,13 +156,13 @@ const LastWeather = (props) => {
 
     makeWeatherRequest();
 
-    const timerID = setInterval(() => {
-      makeWeatherRequest();
-    }, 450000);
+    // const timerID = setInterval(() => {
+    //   makeWeatherRequest();
+    // }, 450000);
 
-    return () => {
-      clearTimeout(timerID);
-    };
+    // return () => {
+    //   clearTimeout(timerID);
+    // };
   }, [
       host,
       getWeather,
@@ -188,6 +200,7 @@ const LastWeather = (props) => {
           defaultValue={pressureChangingPeriod}
           onBlur={pressurePeriodHandler}
           onChange={pressurePeriodHandler}
+          disabled={isLoading}
         />
          hours.</p>
         <ul className={classes['bar-legend']}>
@@ -222,7 +235,7 @@ const LastWeather = (props) => {
                 <th>Power supply, V</th>
               </tr>
               {lastWeather.map(row => (
-                <tr key={row.id}>
+                <tr key={`${row.id}-${uuidv4()}`}>
                   <td>{row.id}</td>
                   <td>{localDateFormat(row.reg_date).dateTime}</td>
                   <td>{row.t} °C</td>
