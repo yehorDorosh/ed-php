@@ -29,7 +29,7 @@ const LastWeather = (props) => {
 
   const [lastWeather, setLastWeather] = useState([]);
   const [pressureDiff, setPressureDiff] = useState();
-  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(1);
+  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(2);
   const [graphConfig, setGraphConfig] = useState({});
   const [isExpand, setIsExpand] = useState(false);
 
