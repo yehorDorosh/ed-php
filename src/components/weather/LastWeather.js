@@ -29,16 +29,15 @@ const LastWeather = (props) => {
 
   const [lastWeather, setLastWeather] = useState([]);
   const [pressureDiff, setPressureDiff] = useState();
-  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(2);
+  const [pressureChangingPeriod, setPressureChangingPeriod] = useState(1);
   const [graphConfig, setGraphConfig] = useState({});
   const [isExpand, setIsExpand] = useState(false);
 
   useEffect(() => {
     function getDateBeforeHours(h) {
-      const today = new Date();
+      const today = new Date(serverCurrentTime().dateTime);
       today.setHours(today.getHours() - h);
-      const serverDate = today.toLocaleString('en-US', {timeZone: 'Europe/London'});
-      return dateFormat(new Date(serverDate));
+      return dateFormat(today);
     }
 
     function getPressureChanging(data) {
@@ -145,7 +144,7 @@ const LastWeather = (props) => {
             diffWaether.sort((a, b) => {
               return new Date(a.reg_date) - new Date(b.reg_date);
             });
-            const pDiff = diffWaether.length && getPressureChanging(diffWaether).diff;
+            const pDiff = diffWaether.length > 1 && getPressureChanging(diffWaether).diff;
             setPressureDiff(pDiff);
             buildGraphConfig(diffWaether);
           }
@@ -154,8 +153,6 @@ const LastWeather = (props) => {
     }
 
     makeWeatherRequest();
-
-    console.log('Sever time (London)', serverCurrentTime().dateTime);
 
     // const timerID = setInterval(() => {
     //   makeWeatherRequest();

@@ -73,7 +73,14 @@ const useDate = () => {
   }, []);
 
   const serverCurrentTime = useCallback(() => {
-    return dateFormat(new Date(new Date().toLocaleString('en-US', {timeZone: 'Europe/London'})));
+    let serverTimeFormBack;
+    if ( window.serverTime ) {
+      const serverHours = window.serverTime.split(':')[0];
+      serverTimeFormBack = dateFormat(new Date(new Date().setHours(serverHours)));
+    }
+    const regionTime = dateFormat(new Date(new Date().toLocaleString('en-US', {timeZone: 'Europe/London'})));
+
+    return serverTimeFormBack ?? regionTime;
   }, [dateFormat]);
   
   return {
