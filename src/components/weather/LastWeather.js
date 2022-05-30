@@ -116,12 +116,11 @@ const LastWeather = (props) => {
               data = data[0];
 
               setLastWeather(prev => {
-                const isPresent = prev.some(item => item.id === data.id);
+                const itemIndex = prev.findIndex(item => item.id === data.id);
                 const updLastWeather = [...prev];
-                if (isPresent) {
-                  prev.forEach((item, i) => {
-                    if (item.id === data.id) updLastWeather[i] = data;
-                  });
+
+                if (itemIndex !== -1) {
+                  updLastWeather[itemIndex] = data;
                 } else {
                   updLastWeather.push(data);
                 }
