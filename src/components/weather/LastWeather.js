@@ -155,6 +155,8 @@ const LastWeather = (props) => {
 
     makeWeatherRequest();
 
+    console.log('Sever time (London)', serverCurrentTime().dateTime);
+
     // const timerID = setInterval(() => {
     //   makeWeatherRequest();
     // }, 450000);
