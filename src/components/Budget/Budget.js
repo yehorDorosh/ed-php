@@ -66,13 +66,17 @@ function Budget() {
 
   const [category, setCategory] = useState('all');
 
+  const [filterPeriod, setFilterPeriod] = useState('month');
   const [month, setMonth] = useState(currentDate().yearMonth);
+  const [year, setYear] = useState(currentDate().year);
 
-  const [categoryType, setCategoryType] = useState('all')
+  const [categoryType, setCategoryType] = useState('all');
 
   const expenseCategory = useSelector((state) => state.category.expense);
   const incomeCategory = useSelector((state) => state.category.income);
   const [categoryList, setCategoryList] = useState(expenseCategory.concat(incomeCategory));
+
+  const [nameFilter, setNameFilter] = useState('');
 
   const categoryTypeHandler = useCallback((e) => {
     if (e && e.target && e.target.value) setCategoryType(e.target.value);
@@ -148,15 +152,30 @@ function Budget() {
     setCategory(e.target.value);
   }
 
+  function filterPeriodHandler(e) {
+    setFilterPeriod(e.target.value);
+  }
+
   function monthHandler(e) {
     setMonth(e.target.value);
+  }
+
+  function yearHandler(e) {
+    setYear(+e.target.value);
+  }
+
+  function nameFilterHandler(e) {
+    setNameFilter(e.target.value);
   }
 
   useEffect(() => {
     const shownItems = incomeItemList.filter((item) => {
       const categoryTypeFilter = categoryType === 'all' || categoryType === item.category_type;
       const categoryFilter = category === 'all' || category === item.category;
-      const dateFilter = month === getYearMonth(item.date);
+      const regExp = new RegExp(nameFilter, 'igm');
+      const dateFilter = ((filterPeriod === 'month' && month === getYearMonth(item.date)) ||
+        (filterPeriod === 'year' && year === new Date(item.date).getFullYear())) &&
+        (nameFilter === '' ? true : regExp.test(item.name));
       
       return showAll || (categoryTypeFilter && categoryFilter && dateFilter);
     }).reverse();
@@ -184,14 +203,22 @@ function Budget() {
     setBalance(totalIncome - totalExpenses);
 
     setFilteredItemList(shownItems);
-  }, [categoryType,  category, month, incomeItemList, showAll, totalExpenses, totalIncome]);
+  }, [categoryType,  category, filterPeriod, month, year, nameFilter, incomeItemList, showAll, totalExpenses, totalIncome]);
 
-  function monthBack() {
-    setMonth((prev) => moveToMonth(prev, -1));
+  function periodBack() {
+    if (filterPeriod === 'month') {
+      setMonth((prev) => moveToMonth(prev, -1));
+    } else if (filterPeriod === 'year') {
+      setYear((prev) => prev - 1);
+    }
   }
 
-  function monthForward() {
-    setMonth((prev) => moveToMonth(prev, 1));
+  function periodForward() {
+    if (filterPeriod === 'month') {
+      setMonth((prev) => moveToMonth(prev, 1));
+    } else if (filterPeriod === 'year') {
+      setYear((prev) => prev + 1);
+    }
   }
 
   function showAllHandler() {
@@ -226,31 +253,72 @@ function Budget() {
             onChange={categoryHandler}
             onBlur={categoryHandler}
           />
-          <Input
-            input={{
-              type: 'month',
-              name: 'filterMonth',
-              id: 'filterMonth',
-            }}
-            label='Month'
-            value={month}
-            onChange={monthHandler}
-            onBlur={monthHandler}
+          <Select
+            name='filterPeriod'
+            id='filterPeriod'
+            label='Filter period'
+            option={['month', 'year']}
+            customClasses={classes.row}
+            value={filterPeriod}
+            onChange={filterPeriodHandler}
+            onBlur={filterPeriodHandler}
           />
+          <div className={classes.row}>
+            { filterPeriod === 'month' && (
+              <Input
+                input={{
+                  type: 'month',
+                  name: 'filterMonth',
+                  id: 'filterMonth',
+                }}
+                label='Month'
+                value={month}
+                onChange={monthHandler}
+                onBlur={monthHandler}
+              />
+            )}
+            { filterPeriod === 'year' && (
+              <Input
+                input={{
+                  type: 'number',
+                  name: 'filterYear',
+                  id: 'filterYear',
+                  step: 1
+                }}
+                label='Year'
+                value={year}
+                onChange={yearHandler}
+                onBlur={yearHandler}
+              />
+            )}
+          </div>
+          <div className={classes.row}>
+            <Input
+              input={{
+                type: 'text',
+                name: 'filterName',
+                id: 'filterName',
+              }}
+              label='Filter name'
+              value={nameFilter}
+              onChange={nameFilterHandler}
+              onBlur={nameFilterHandler}
+            />
+          </div>
           <div className={`${classes['btn-row']} ${classes.row}`}>
             <Button
               btn={{
                 type: 'button',
               }}
-              btnText='One month back' 
-              onClick={monthBack}
+              btnText={`One ${filterPeriod} back`}
+              onClick={periodBack}
             />
             <Button
               btn={{
                 type: 'button',
               }}
-              btnText='One month forward' 
-              onClick={monthForward}
+              btnText={`One ${filterPeriod} forward`}
+              onClick={periodForward}
             />
           </div>
           <div className={`${classes.row}`}>
