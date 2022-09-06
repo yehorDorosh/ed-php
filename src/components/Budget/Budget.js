@@ -173,11 +173,11 @@ function Budget() {
       const categoryTypeFilter = categoryType === 'all' || categoryType === item.category_type;
       const categoryFilter = category === 'all' || category === item.category;
       const regExp = new RegExp(nameFilter, 'igm');
-      const dateFilter = ((filterPeriod === 'month' && month === getYearMonth(item.date)) ||
-        (filterPeriod === 'year' && year === new Date(item.date).getFullYear())) &&
-        (nameFilter === '' ? true : regExp.test(item.name));
+      const dateFilter = (filterPeriod === 'month' && month === getYearMonth(item.date)) ||
+        (filterPeriod === 'year' && year === new Date(item.date).getFullYear());
+      const filterByName = nameFilter === '' ? true : regExp.test(item.name);
       
-      return showAll || (categoryTypeFilter && categoryFilter && dateFilter);
+      return showAll || (categoryTypeFilter && categoryFilter && dateFilter && filterByName);
     }).reverse();
 
     setTotalExpenses(
