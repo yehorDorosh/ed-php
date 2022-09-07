@@ -34,10 +34,13 @@ const LastWeather = (props) => {
   const [isExpand, setIsExpand] = useState(false);
 
   useEffect(() => {
-    function getDateBeforeHours(h) {
-      const today = new Date(serverCurrentTime(host).dateTime);
+    async function getDateBeforeHours(h) {
+      const localDate = await serverCurrentTime(host);
+      const today = new Date(localDate.dateTime);
       today.setHours(today.getHours() - h);
-      return dateFormat(today);
+      return new Promise((resolve) => {
+        resolve(dateFormat(today));
+      });
     }
 
     function getPressureChanging(data) {
@@ -132,10 +135,12 @@ const LastWeather = (props) => {
       });
 
       let diffWaether = [];
-      IDs.forEach(id => {
+      IDs.forEach(async (id) => {
+        const end = await serverCurrentTime(host);
+        const start = await getDateBeforeHours(pressureChangingPeriod);
         getWeather(
           {
-            url: `${host}/api/weather.php?id=${id}&dateFrom=${getDateBeforeHours(pressureChangingPeriod).dateTime}&dateTo=${serverCurrentTime(host).dateTime}`,
+            url: `${host}/api/weather.php?id=${id}&dateFrom=${start.dateTime}&dateTo=${end.dateTime}`,
           },
           (response) => {
             const data = response.data;
