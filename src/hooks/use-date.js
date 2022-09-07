@@ -72,9 +72,15 @@ const useDate = () => {
     }
   }, []);
 
-  const serverCurrentTime = useCallback(() => {
+  const serverCurrentTime = useCallback(async (host) => {
+    let time = window.serverTime;
+    const response = await fetch(`${host}/api/time.php`);
+    if (response.ok) {
+      const data = await response.json();
+      time = data.time;
+    }
     let serverTimeFormBack;
-    if ( window.serverTime ) {
+    if (time) {
       const serverHours = window.serverTime.split(':')[0];
       serverTimeFormBack = dateFormat(new Date(new Date().setHours(serverHours)));
     }

@@ -35,7 +35,7 @@ const LastWeather = (props) => {
 
   useEffect(() => {
     function getDateBeforeHours(h) {
-      const today = new Date(serverCurrentTime().dateTime);
+      const today = new Date(serverCurrentTime(host).dateTime);
       today.setHours(today.getHours() - h);
       return dateFormat(today);
     }
@@ -135,7 +135,7 @@ const LastWeather = (props) => {
       IDs.forEach(id => {
         getWeather(
           {
-            url: `${host}/api/weather.php?id=${id}&dateFrom=${getDateBeforeHours(pressureChangingPeriod).dateTime}&dateTo=${serverCurrentTime().dateTime}`,
+            url: `${host}/api/weather.php?id=${id}&dateFrom=${getDateBeforeHours(pressureChangingPeriod).dateTime}&dateTo=${serverCurrentTime(host).dateTime}`,
           },
           (response) => {
             const data = response.data;
