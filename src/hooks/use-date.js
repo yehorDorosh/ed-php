@@ -72,16 +72,17 @@ const useDate = () => {
     }
   }, []);
 
-  const serverCurrentTime = useCallback(async (host) => {
+  const serverCurrentTime = useCallback((host) => {
     let time = window.serverTime;
-    const response = await fetch(`${host}/api/time.php`);
-    if (response.ok) {
-      const data = await response.json();
-      time = data.time;
-    }
+    // const response = await fetch(`${host}/api/time.php`);
+    // if (response.ok) {
+    //   const data = await response.json();
+    //   time = data.time;
+    //   console.log(time);
+    // }
     let serverTimeFormBack;
     if (time) {
-      const serverHours = window.serverTime.split(':')[0];
+      const serverHours = time.split(':')[0];
       serverTimeFormBack = dateFormat(new Date(new Date().setHours(serverHours)));
     }
     const regionTime = dateFormat(new Date(new Date().toLocaleString('en-US', {timeZone: 'Europe/London'})));
