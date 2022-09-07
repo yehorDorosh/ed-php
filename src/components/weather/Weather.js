@@ -17,11 +17,13 @@ import Graph from '../UI/Graph/Graph';
 const IDs = ['1', 'out-of-door', '2nd-floor'];
 
 const Weather = (props) => {
-  const {localDateFormat, currentDate} = useDate();
+  const {localDateFormat, currentDate, dateFormat} = useDate();
   const ctxAPI = useContext(APIContext);
   const [isExpand, setIsExpand] = useState(false);
 
-  const [date, setDate] = useState(currentDate().date);
+  const [startDate, setStartDate] = useState(`${currentDate().date}T00:00`);
+  const [endDate, setEndDate] = useState(`${currentDate().date}T23:59`);
+
   const [id, setId] = useState('1');
 
   function expandWeatherBlock() {
@@ -33,11 +35,32 @@ const Weather = (props) => {
 
   const [weather, setWeather] = useState([]);
   const [graphConfig, setGraphConfig] = useState({});
+  const [graphMode, setGraphMode] = useState('temperature');
 
   function buildGraphConfig(weatherData) {
     if (!weatherData.length) return;
 
-    const t = weatherData.map(row => row.t);
+    let color = 'red';
+    const label = {
+      'temperature': 'Temperature, °C',
+      'pressure': 'Pressure, Pa',
+      'voltage': 'Voltage, V'
+    };
+    const d = weatherData.map((row) => {
+      if (graphMode === 'temperature') {
+        color = 'red';
+        return row.t;
+      } else if (graphMode === 'pressure') {
+        color = 'blue';
+        if (row.p < 95000) { return null; }
+        return row.p;
+      } else if (graphMode === 'voltage') {
+        color = 'green';
+        return row.v;
+      } else {
+        return row.a;
+      }
+    });
     const date = weatherData.map(row => localDateFormat(row.reg_date).dateTime);
 
     const config = {
@@ -46,9 +69,9 @@ const Weather = (props) => {
         labels: date,
         datasets: [
           {
-            label: 'Temperature, °C',
-            borderColor: 'red',
-            data: t,
+            label: label[graphMode],
+            borderColor: color,
+            data: d,
             fill: false,
           }
         ],
@@ -61,10 +84,15 @@ const Weather = (props) => {
 
   function makeWeatherRequest(e) {
     e.preventDefault();
+    const start = new Date(`${startDate.replace('T', ' ')}`);
+    const end = new Date(`${endDate.replace('T', ' ')}`);
+    const timeShift = (start - new Date(localDateFormat(startDate).dateTime)) / 3600000;
+    start.setHours(start.getHours() + timeShift);
+    end.setHours(end.getHours() + timeShift);
   
     getWeather(
       {
-        url: `${host}/api/weather.php?id=${id}&date=${date}`,
+        url: `${host}/api/weather.php?id=${id}&dateFrom=${dateFormat(start).dateTime}&dateTo=${dateFormat(end).dateTime}`,
       },
       (response) => {
         setWeather(response.data);
@@ -74,8 +102,16 @@ const Weather = (props) => {
     );
   }
 
-  function dayHandler(e) {
-    setDate(e.target.value);
+  function startDateHandler(e) {
+    setStartDate(e.target.value);
+  }
+
+  function endDateHandler(e) {
+    setEndDate(e.target.value);
+  }
+
+  function graphModeHandler(e) {
+    setGraphMode(e.target.value);
   }
 
   function idInputHandler(e) {
@@ -89,23 +125,42 @@ const Weather = (props) => {
         <form className={classes.form} onSubmit={makeWeatherRequest}>
           <Input
             input={{
-              type: 'date',
-              name: 'filterDay',
-              id: 'filterDay',
+              type: 'datetime-local',
+              name: 'startDate',
+              id: 'startDate',
             }}
-            label='Day'
-            value={date}
-            onChange={dayHandler}
-            onBlur={dayHandler}
+            label='From'
+            value={startDate}
+            onChange={startDateHandler}
+            onBlur={startDateHandler}
+            customClasses={classes['mb-2']}
+          />
+          <Input
+            input={{
+              type: 'datetime-local',
+              name: 'endDate',
+              id: 'endDate',
+            }}
+            label='To'
+            value={endDate}
+            onChange={endDateHandler}
+            onBlur={endDateHandler}
             customClasses={classes['mb-2']}
           />
           <Select
             label='Sensor ID'
             option={IDs}
             value={id}
-            customClasses={''}
+            customClasses={classes['mb-2']}
             onChange={idInputHandler}
             onBlur={idInputHandler}
+          />
+          <Select
+            label='Data'
+            option={['temperature', 'pressure', 'voltage']}
+            value={graphMode}
+            onChange={graphModeHandler}
+            onBlur={graphModeHandler}
           />
           <div className={`${classes.row}`}>
             <Button btnText="Get data" />

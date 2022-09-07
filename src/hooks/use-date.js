@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 const useDate = () => {
   const localDateFormat = useCallback((strDate) => {
-    const date = new Date(`${strDate} UTC`);
+    const date = new Date(`${strDate.replace('T', ' ')} UTC`);
     const year = date.getFullYear();
     const month = `${date.getMonth() + 1}`.length < 2 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
     const day = date.getDate().toString().length < 2 ? `0${date.getDate()}` : date.getDate();
